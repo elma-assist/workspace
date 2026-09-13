@@ -1,7 +1,8 @@
-name: Checks and deployment
+name: Checks and images
 on:
   push:
     branches: [main]
+    tags: ['v*']
   pull_request:
   workflow_dispatch:
 permissions:
@@ -31,8 +32,6 @@ jobs:
       - run: npm run typecheck && npm run test:ui && npx pyright
       - run: python3 scripts/check-licenses.py
       - run: cp .env.example .env.local && python3 scripts/configure.py
-      - name: Validate production configuration
-        run: IMAGE_TAG=${{ github.sha }} ELMA_SHARED_DIR="$PWD/infra/local" docker compose --env-file infra/local/runtime.env -f infra/compose.production.yaml config --quiet
       - name: Start isolated test stack
         run: docker compose --env-file infra/local/runtime.env -f infra/compose.yaml up -d --build --wait --wait-timeout 180 api web landing traefik
       - name: API integration and migration checks
@@ -58,7 +57,7 @@ jobs:
         run: docker compose --env-file infra/local/runtime.env -f infra/compose.yaml down -v
   images:
     needs: checks
-    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    if: github.ref_type == 'tag' && startsWith(github.ref_name, 'v')
     runs-on: ubuntu-24.04
     timeout-minutes: 25
     permissions:
@@ -86,42 +85,9 @@ jobs:
           file: ${{ matrix.dockerfile }}
           platforms: linux/amd64
           push: true
-          tags: ghcr.io/elma-assist/workspace-${{ matrix.name }}:${{ github.sha }}
+          tags: |
+            ghcr.io/elma-assist/workspace-${{ matrix.name }}:${{ github.sha }}
+            ghcr.io/elma-assist/workspace-${{ matrix.name }}:${{ github.ref_name }}
           labels: org.opencontainers.image.source=https://github.com/elma-assist/workspace
           cache-from: type=gha,scope=${{ matrix.name }}
           cache-to: type=gha,mode=max,scope=${{ matrix.name }}
-  deploy:
-    needs: images
-    runs-on: ubuntu-24.04
-    timeout-minutes: 20
-    environment:
-      name: production
-      url: https://elma-assist.de
-    permissions:
-      contents: read
-      packages: read
-    steps:
-      - uses: actions/checkout@v4
-      - name: Configure deployment SSH key and pinned host identity
-        env:
-          SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
-          KNOWN_HOSTS: ${{ secrets.DEPLOY_KNOWN_HOSTS }}
-        run: |
-          install -m 700 -d ~/.ssh
-          printf '%s\n' "$SSH_KEY" > ~/.ssh/id_ed25519
-          printf '%s\n' "$KNOWN_HOSTS" > ~/.ssh/known_hosts
-          chmod 600 ~/.ssh/id_ed25519 ~/.ssh/known_hosts
-      - name: Upload release and deploy verified images
-        env:
-          DEPLOY_HOST: ${{ vars.DEPLOY_HOST }}
-          GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          RELEASE_SHA: ${{ github.sha }}
-          GHCR_USER: ${{ github.actor }}
-        run: |
-          set -euo pipefail
-          ssh -o BatchMode=yes "deploy@$DEPLOY_HOST" "mkdir -p /opt/elma/releases/$RELEASE_SHA"
-          git archive HEAD | ssh -o BatchMode=yes "deploy@$DEPLOY_HOST" "tar -x -C /opt/elma/releases/$RELEASE_SHA"
-          printf '%s' "$GHCR_TOKEN" | ssh -o BatchMode=yes "deploy@$DEPLOY_HOST" "bash /opt/elma/releases/$RELEASE_SHA/scripts/deploy.sh $RELEASE_SHA '$GHCR_USER'"
-      - name: Remove deployment key
-        if: always()
-        run: rm -f ~/.ssh/id_ed25519
