@@ -45,7 +45,7 @@ jobs:
       - name: Browser checks without paid AI services
         run: |
           npx playwright test --project=desktop tests/browser/landing.spec.ts tests/browser/landing-locale.spec.ts
-          npx playwright test --project=desktop tests/browser/agent-description.spec.ts --grep '^agent editor'
+          npx playwright test --project=desktop tests/browser/agent-description.spec.ts --grep 'agent editor saves'
       - name: Failure diagnostics
         if: failure()
         run: docker compose --env-file infra/local/runtime.env -f infra/compose.yaml logs --tail=80 api web landing traefik seaweedfs postgres
