@@ -35,6 +35,15 @@ test("English default, explicit German selection and metadata survive reload", a
   await expect(page.locator(".owner-stat")).toContainText(
     "Wohnungseigentümern in Deutschland",
   );
+  await expect(page.locator("#capabilities")).toContainText(
+    "Bewohner rund um die Uhr beraten",
+  );
+  await expect(page.locator("#capabilities")).toContainText(
+    "Aktuellen Status mitteilen",
+  );
+  await expect(page.locator("#capabilities")).toContainText(
+    "Viele Bewohner direkt erreichen",
+  );
   expect(
     await page
       .locator(".source-link")

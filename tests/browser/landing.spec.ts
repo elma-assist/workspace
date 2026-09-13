@@ -1,5 +1,36 @@
 import { test, expect } from "@playwright/test";
 
+test("privacy consent appears once without changing the live demo", async ({
+  page,
+}) => {
+  await page.goto("/");
+  await page.evaluate(() => localStorage.removeItem("elma-site-privacy-v1"));
+  await page.reload();
+  const popup = page.getByRole("dialog", {
+    name: "Your data. Your choice.",
+  });
+  await expect(popup).toBeVisible();
+  await page
+    .getByRole("button", { name: "Try Elma", exact: true })
+    .first()
+    .click();
+  await expect(
+    page.getByRole("button", { name: "Start a chat", exact: true }),
+  ).toBeVisible();
+  await page.getByRole("button", { name: "Close", exact: true }).click();
+  await page.getByRole("button", { name: "Accept all", exact: true }).click();
+  await expect(popup).toBeHidden();
+  await page.reload();
+  await expect(popup).toBeHidden();
+  await page
+    .getByRole("button", { name: "Privacy choices", exact: true })
+    .click();
+  await expect(popup).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: "Accept all", exact: true }),
+  ).toBeVisible();
+});
+
 test("workflow animation advances, pauses and supports manual navigation without moving layout", async ({
   page,
 }) => {

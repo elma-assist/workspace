@@ -12,3 +12,4 @@ FROM nginx:1.27-alpine
 COPY --from=build /repo/apps/landing/public /usr/share/nginx/html
 COPY --from=build /repo/packages/agent-widget/dist/widget.js /usr/share/nginx/html/widget.js
 COPY --from=build /repo/node_modules/lucide-react/LICENSE /usr/share/nginx/html/icons-LICENSE.txt
+COPY apps/landing/nginx.conf /etc/nginx/conf.d/default.conf

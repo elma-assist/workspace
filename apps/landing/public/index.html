@@ -12,11 +12,11 @@
     <link rel="icon" href="/favicon-32x32.png" type="image/png" sizes="32x32" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" sizes="any" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180" />
-    <link rel="stylesheet" href="/landing.css" />
-    <link rel="stylesheet" href="/workflow.css" />
-    <script src="/locale.js" defer></script>
-    <script src="/landing.js" defer></script>
-    <script src="/workflow.js" defer></script>
+    <link rel="stylesheet" href="/landing.css?v=20260913-1" />
+    <link rel="stylesheet" href="/workflow.css?v=20260913-1" />
+    <script src="/locale.js?v=20260913-1" defer></script>
+    <script src="/landing.js?v=20260913-1" defer></script>
+    <script src="/workflow.js?v=20260913-1" defer></script>
   </head>
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
@@ -25,7 +25,8 @@
         ><img src="/favicon.svg" width="36" height="36" alt="" />elma</a
       >
       <div class="nav-links">
-        <a href="#how">How it works</a><a href="#benefits">For your team</a>
+        <a href="#how">How it works</a><a href="#capabilities">Capabilities</a
+        ><a href="#benefits">For your team</a>
       </div>
       <div class="nav-controls">
         <a href="/app" class="login" aria-label="Your workspace"
@@ -264,11 +265,111 @@
         </p>
       </section>
       <section
+        class="capabilities section-shell"
+        id="capabilities"
+        aria-labelledby="capabilities-title"
+      >
+        <div class="capabilities-heading">
+          <span class="section-label">04 / Work Elma can take on</span>
+          <h2 id="capabilities-title">
+            One teammate.<br />Every resident conversation.
+          </h2>
+          <p>
+            Elma handles recurring communication from the first question to a
+            documented outcome—across inbound support, structured requests and
+            proactive outreach.
+          </p>
+        </div>
+        <div class="capabilities-grid">
+          <article class="capability-card capability-card-featured">
+            <span class="capability-icon" aria-hidden="true">
+              <svg class="lucide"><use href="/icons.svg#message-square" /></svg>
+            </span>
+            <span class="capability-eyebrow">Always available</span>
+            <h3>Consult residents 24/7</h3>
+            <p>
+              Answer questions in text or voice using your approved documents,
+              building information and internal knowledge.
+            </p>
+            <span class="capability-meta">Website · Voice · QR access</span>
+          </article>
+          <article class="capability-card">
+            <span class="capability-icon" aria-hidden="true">
+              <svg class="lucide"><use href="/icons.svg#clipboard-list" /></svg>
+            </span>
+            <h3>Receive and process requests</h3>
+            <p>
+              Ask for missing details, collect photos and form answers, and turn
+              each conversation into a structured request.
+            </p>
+          </article>
+          <article class="capability-card">
+            <span class="capability-icon" aria-hidden="true">
+              <svg class="lucide">
+                <use href="/icons.svg#chart-no-axes-combined" />
+              </svg>
+            </span>
+            <h3>Report the current status</h3>
+            <p>
+              Connect to CRM and ERP systems so residents can check progress
+              without asking your team to look it up.
+            </p>
+          </article>
+          <article class="capability-card">
+            <span class="capability-icon" aria-hidden="true">
+              <svg class="lucide"><use href="/icons.svg#users" /></svg>
+            </span>
+            <h3>Work on behalf of employees</h3>
+            <p>
+              Staff delegate resident follow-ups to Elma while keeping the
+              conversation, outcome and next step visible.
+            </p>
+          </article>
+          <article class="capability-card">
+            <span class="capability-icon" aria-hidden="true">
+              <svg class="lucide"><use href="/icons.svg#phone" /></svg>
+            </span>
+            <h3>Reach residents at scale</h3>
+            <p>
+              Run outbound call campaigns for appointments, maintenance,
+              meetings and other important notices.
+            </p>
+          </article>
+          <article class="capability-card">
+            <span class="capability-icon" aria-hidden="true">
+              <svg class="lucide">
+                <use href="/icons.svg#clipboard-check" />
+              </svg>
+            </span>
+            <h3>Send and collect forms</h3>
+            <p>
+              Deliver forms to many residents, help complete them in the
+              conversation and follow up on missing responses.
+            </p>
+          </article>
+        </div>
+        <div class="capability-flow" aria-label="Elma communication workflow">
+          <span>Resident contact</span>
+          <svg class="lucide" aria-hidden="true">
+            <use href="/icons.svg#arrow-right" />
+          </svg>
+          <span>Structured request</span>
+          <svg class="lucide" aria-hidden="true">
+            <use href="/icons.svg#arrow-right" />
+          </svg>
+          <span>CRM or ERP update</span>
+          <svg class="lucide" aria-hidden="true">
+            <use href="/icons.svg#arrow-right" />
+          </svg>
+          <span>Resident informed</span>
+        </div>
+      </section>
+      <section
         class="repair-example section-shell"
         aria-labelledby="example-title"
       >
         <div>
-          <span class="section-label">04 / One everyday example</span>
+          <span class="section-label">05 / One everyday example</span>
           <h2 id="example-title">“My heating<br />isn’t working.”</h2>
           <p>
             A short message rarely contains everything your team needs. Elma
@@ -477,7 +578,7 @@
         aria-labelledby="benefits-title"
       >
         <div class="benefits-heading">
-          <span class="section-label">05 / Better for both sides</span>
+          <span class="section-label">06 / Better for both sides</span>
           <h2 id="benefits-title">
             More room for your team.<br />A simpler way for residents.
           </h2>
@@ -501,9 +602,77 @@
           </ul>
         </div>
       </section>
+      <section
+        class="trust section-shell"
+        id="trust"
+        aria-labelledby="trust-title"
+      >
+        <div class="trust-intro">
+          <span class="section-label">07 / European foundation</span>
+          <h2 id="trust-title">European AI.<br />European deployment.</h2>
+          <p>
+            Elma is designed for organisations that want useful AI with a
+            European operating model. The core application, database, files and
+            realtime services are deployed on EU-hosted infrastructure.
+          </p>
+          <div class="mistral-signature">
+            <span class="mistral-monogram" aria-hidden="true">M</span>
+            <span><small>Core AI by</small><strong>Mistral AI</strong></span>
+            <span class="paris-note">Paris · France · EU</span>
+          </div>
+        </div>
+        <div class="trust-details">
+          <div class="trust-seals" aria-label="European data commitments">
+            <article>
+              <div class="trust-seal" aria-hidden="true">
+                <span>EU</span><small>HOSTED</small>
+              </div>
+              <h3>EU-hosted production</h3>
+              <p>
+                Application, operational data, documents and realtime stack.
+              </p>
+            </article>
+            <article>
+              <div class="trust-seal ai" aria-hidden="true">
+                <span>AI</span><small>EUROPE</small>
+              </div>
+              <h3>European AI core</h3>
+              <p>Mistral AI is a French company, headquartered in Paris.</p>
+            </article>
+            <article>
+              <div class="trust-seal privacy" aria-hidden="true">
+                <span>GDPR</span><small>FOUNDATION</small>
+              </div>
+              <h3>Datenschutz foundation</h3>
+              <p>
+                Organisation isolation, controlled access and auditable usage.
+              </p>
+            </article>
+          </div>
+          <div class="trust-note">
+            <strong>Clear about where data goes.</strong>
+            <p>
+              Mistral hosts customer data in the European Union by default and
+              offers European regional inference. Some features may involve
+              limited, safeguarded transfers to listed subprocessors. GDPR
+              compliance also depends on each customer’s legal basis,
+              configuration and retention policy.
+            </p>
+            <div class="trust-links">
+              <a
+                href="https://help.mistral.ai/en/articles/347629-where-do-you-store-my-data-or-my-organization-s-data"
+                >Mistral data location ↗</a
+              ><a
+                href="https://commission.europa.eu/law/law-topic/data-protection/information-business-and-organisations/principles-gdpr_en"
+                >EU GDPR principles ↗</a
+              >
+            </div>
+          </div>
+        </div>
+      </section>
       <section class="bottom" id="demo" aria-labelledby="demo-title">
         <span class="bottom-mark" aria-hidden="true">e</span
-        ><span class="section-label">06 / Try it as a resident</span>
+        ><span class="section-label">08 / Try it as a resident</span>
         <h2 id="demo-title">
           Your building.<br />Your next request. Meet Elma.
         </h2>
@@ -533,12 +702,68 @@
         <p class="widget-error" role="status"></p>
       </section>
     </main>
+    <aside
+      class="privacy-popup"
+      data-privacy-popup
+      role="dialog"
+      aria-labelledby="privacy-popup-title"
+      hidden
+    >
+      <span class="privacy-kicker">Data protection · GDPR</span>
+      <strong id="privacy-popup-title">Your data. Your choice.</strong>
+      <p class="privacy-intro">
+        We use essential browser storage to remember your language and active
+        conversation. We do not use advertising cookies.
+      </p>
+      <div class="privacy-facts">
+        <div>
+          <strong>European processing</strong>
+          <p>
+            Application data is stored on EU-hosted services. AI processing is
+            provided by Mistral AI, a French provider.
+          </p>
+        </div>
+        <div>
+          <strong>Your rights</strong>
+          <p>
+            You may request access, correction, deletion or restriction of your
+            personal data.
+          </p>
+        </div>
+      </div>
+      <p class="privacy-legal">
+        You can accept optional processing or continue with essential browser
+        storage only. You can change your choice at any time.
+        <a href="#trust">Data protection details →</a>
+      </p>
+      <div class="privacy-actions">
+        <button
+          type="button"
+          class="privacy-accept"
+          data-privacy-choice="accepted"
+        >
+          Accept all
+        </button>
+        <button
+          type="button"
+          class="privacy-essential"
+          data-privacy-choice="essential"
+        >
+          Essential only
+        </button>
+      </div>
+    </aside>
     <footer>
       <a class="brand" href="/" aria-label="Elma home"
         ><img src="/favicon.svg" alt="" width="32" height="32" />elma</a
       >
       <p>AI teammates. Human decisions.</p>
-      <a class="text-link" href="/app">Your workspace →</a>
+      <div class="footer-links">
+        <button type="button" class="text-link" data-open-privacy>
+          Privacy choices
+        </button>
+        <a class="text-link" href="/app">Your workspace →</a>
+      </div>
     </footer>
   </body>
 </html>

@@ -10,6 +10,7 @@
     "Elma home": "Elma Startseite",
     Language: "Sprache",
     "How it works": "So funktioniert’s",
+    Capabilities: "Aufgaben",
     "For your team": "Für Ihr Team",
     "Your workspace": "Ihr Arbeitsbereich",
     "For residential property management in Germany":
@@ -81,7 +82,37 @@
       "Ihr Team prüft die eingereichten Angaben und das Gespräch, aktualisiert den Status und plant die nächsten Schritte.",
     "Your team stays responsible for decisions, assignments and the work itself.":
       "Entscheidungen, Zuständigkeiten und die eigentliche Arbeit bleiben in der Verantwortung Ihres Teams.",
-    "04 / One everyday example": "04 / Ein Beispiel aus dem Alltag",
+    "04 / Work Elma can take on": "04 / Aufgaben für Elma",
+    "One teammate.": "Eine KI-Unterstützung.",
+    "Every resident conversation.": "Für jeden Bewohnerkontakt.",
+    "Elma handles recurring communication from the first question to a documented outcome—across inbound support, structured requests and proactive outreach.":
+      "Elma übernimmt wiederkehrende Kommunikation von der ersten Frage bis zum dokumentierten Ergebnis – im Eingang, bei strukturierten Anliegen und in der aktiven Ansprache.",
+    "Always available": "Immer erreichbar",
+    "Consult residents 24/7": "Bewohner rund um die Uhr beraten",
+    "Answer questions in text or voice using your approved documents, building information and internal knowledge.":
+      "Fragen per Text oder Sprache anhand Ihrer freigegebenen Dokumente, Gebäudeinformationen und internen Wissensbestände beantworten.",
+    "Website · Voice · QR access": "Website · Sprache · QR-Zugang",
+    "Receive and process requests": "Anliegen aufnehmen und aufbereiten",
+    "Ask for missing details, collect photos and form answers, and turn each conversation into a structured request.":
+      "Fehlende Angaben erfragen, Fotos und Formularantworten erfassen und jedes Gespräch in ein strukturiertes Anliegen überführen.",
+    "Report the current status": "Aktuellen Status mitteilen",
+    "Connect to CRM and ERP systems so residents can check progress without asking your team to look it up.":
+      "CRM- und ERP-Systeme anbinden, damit Bewohner den Fortschritt erfahren, ohne dass Ihr Team ihn manuell nachschlagen muss.",
+    "Work on behalf of employees": "Im Auftrag von Mitarbeitern kommunizieren",
+    "Staff delegate resident follow-ups to Elma while keeping the conversation, outcome and next step visible.":
+      "Mitarbeiter delegieren die weitere Kommunikation mit Bewohnern an Elma und behalten Gespräch, Ergebnis und nächsten Schritt im Blick.",
+    "Reach residents at scale": "Viele Bewohner direkt erreichen",
+    "Run outbound call campaigns for appointments, maintenance, meetings and other important notices.":
+      "Ausgehende Anrufkampagnen für Termine, Wartungen, Versammlungen und andere wichtige Hinweise durchführen.",
+    "Send and collect forms": "Formulare versenden und erfassen",
+    "Deliver forms to many residents, help complete them in the conversation and follow up on missing responses.":
+      "Formulare an viele Bewohner senden, beim Ausfüllen im Gespräch helfen und fehlende Rückmeldungen nachverfolgen.",
+    "Elma communication workflow": "Kommunikationsablauf mit Elma",
+    "Resident contact": "Bewohnerkontakt",
+    "Structured request": "Strukturiertes Anliegen",
+    "CRM or ERP update": "CRM- oder ERP-Aktualisierung",
+    "Resident informed": "Bewohner informiert",
+    "05 / One everyday example": "05 / Ein Beispiel aus dem Alltag",
     "“My heating": "„Meine Heizung",
     "isn’t working.”": "funktioniert nicht.“",
     "A short message rarely contains everything your team needs. Elma helps turn it into a structured repair request, with contact details, the apartment and a description of the problem.":
@@ -147,7 +178,7 @@
     "Replay animation": "Animation erneut abspielen",
     "Illustrative scenario, not a live conversation. Try real forms in the live widget. Your team reviews requests and manages follow-up.":
       "Beispielszenario, kein Live-Gespräch. Probieren Sie echte Formulare im Live-Widget aus. Ihr Team prüft die Anfragen und organisiert die weitere Bearbeitung.",
-    "05 / Better for both sides": "05 / Besser für beide Seiten",
+    "06 / Better for both sides": "06 / Besser für beide Seiten",
     "More room for your team.": "Mehr Freiraum für Ihr Team.",
     "A simpler way for residents.": "Einfacher für Bewohner.",
     "For your property-management team": "Für Ihr Verwaltungsteam",
@@ -166,7 +197,33 @@
       "Unterstützung bei den nötigen Angaben zur Anfrage",
     "A chance to check the request before submitting":
       "Die Anfrage vor dem Absenden in Ruhe prüfen",
-    "06 / Try it as a resident": "06 / Aus Bewohnersicht ausprobieren",
+    "07 / European foundation": "07 / Europäische Grundlage",
+    "European AI.": "Europäische KI.",
+    "European deployment.": "Europäischer Betrieb.",
+    "Elma is designed for organisations that want useful AI with a European operating model. The core application, database, files and realtime services are deployed on EU-hosted infrastructure.":
+      "Elma ist für Organisationen entwickelt, die praktische KI mit einem europäischen Betriebsmodell einsetzen möchten. Kernanwendung, Datenbank, Dateien und Echtzeitdienste werden auf EU-gehosteter Infrastruktur betrieben.",
+    "Core AI by": "KI-Kern von",
+    "Paris · France · EU": "Paris · Frankreich · EU",
+    "European data commitments": "Europäische Datenzusagen",
+    HOSTED: "HOSTING",
+    EUROPE: "EUROPA",
+    GDPR: "DSGVO",
+    FOUNDATION: "GRUNDLAGE",
+    "EU-hosted production": "Produktion in der EU",
+    "Application, operational data, documents and realtime stack.":
+      "Anwendung, Betriebsdaten, Dokumente und Echtzeit-Stack.",
+    "European AI core": "Europäischer KI-Kern",
+    "Mistral AI is a French company, headquartered in Paris.":
+      "Mistral AI ist ein französisches Unternehmen mit Sitz in Paris.",
+    "Datenschutz foundation": "Datenschutz als Grundlage",
+    "Organisation isolation, controlled access and auditable usage.":
+      "Getrennte Organisationen, kontrollierter Zugriff und nachvollziehbare Nutzung.",
+    "Clear about where data goes.": "Klarheit darüber, wohin Daten gehen.",
+    "Mistral hosts customer data in the European Union by default and offers European regional inference. Some features may involve limited, safeguarded transfers to listed subprocessors. GDPR compliance also depends on each customer’s legal basis, configuration and retention policy.":
+      "Mistral hostet Kundendaten standardmäßig in der Europäischen Union und bietet regionale Inferenz in Europa. Bei einzelnen Funktionen können begrenzte, abgesicherte Übermittlungen an aufgeführte Unterauftragsverarbeiter stattfinden. Die DSGVO-Konformität hängt außerdem von Rechtsgrundlage, Konfiguration und Aufbewahrungsregeln des jeweiligen Kunden ab.",
+    "Mistral data location ↗": "Datenstandort bei Mistral ↗",
+    "EU GDPR principles ↗": "DSGVO-Grundsätze der EU ↗",
+    "08 / Try it as a resident": "08 / Aus Bewohnersicht ausprobieren",
     "Your building.": "Ihr Gebäude.",
     "Your next request. Meet Elma.":
       "Ihr nächstes Anliegen. Lernen Sie Elma kennen.",
@@ -174,6 +231,22 @@
       "Lernen Sie Emma kennen, die Elma-Demoassistentin der fiktiven Hausverwaltung Nordhaus. Stellen Sie sich vor, Sie wohnen in der Lindenstraße 12, Wohnung 4. Fragen Sie nach der Hausordnung oder melden Sie einen kalten Heizkörper und bereiten Sie eine Reparaturanfrage vor.",
     "“The radiator in my living room has been cold since yesterday.”":
       "„Der Heizkörper in meinem Wohnzimmer ist seit gestern kalt.“",
+    "Data protection · GDPR": "Datenschutz · DSGVO",
+    "Your data. Your choice.": "Ihre Daten. Ihre Entscheidung.",
+    "We use essential browser storage to remember your language and active conversation. We do not use advertising cookies.":
+      "Wir verwenden nur technisch notwendigen Browserspeicher, um Ihre Sprache und die aktive Unterhaltung zu speichern. Wir verwenden keine Werbe-Cookies.",
+    "European processing": "Verarbeitung in Europa",
+    "Application data is stored on EU-hosted services. AI processing is provided by Mistral AI, a French provider.":
+      "Anwendungsdaten werden auf EU-gehosteten Diensten gespeichert. Die KI-Verarbeitung erfolgt durch den französischen Anbieter Mistral AI.",
+    "Your rights": "Ihre Rechte",
+    "You may request access, correction, deletion or restriction of your personal data.":
+      "Sie können Auskunft, Berichtigung, Löschung oder Einschränkung der Verarbeitung Ihrer personenbezogenen Daten verlangen.",
+    "You can accept optional processing or continue with essential browser storage only. You can change your choice at any time.":
+      "Sie können der optionalen Verarbeitung zustimmen oder nur mit technisch notwendigem Browserspeicher fortfahren. Sie können Ihre Auswahl jederzeit ändern.",
+    "Data protection details →": "Details zum Datenschutz →",
+    "Accept all": "Alle akzeptieren",
+    "Essential only": "Nur notwendige",
+    "Privacy choices": "Datenschutzauswahl",
     "Use made-up contact details. This is a demo, not a real repair service.":
       "Verwenden Sie erfundene Kontaktdaten. Dies ist eine Demo, kein echter Reparaturservice.",
     "Start with text, or choose a voice conversation.":

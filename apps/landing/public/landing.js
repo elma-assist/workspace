@@ -3,6 +3,32 @@
     pendingOpen = false,
     failed = false;
   const t = (text) => window.ElmaLanding.t(text);
+  const consentPopup = document.querySelector("[data-privacy-popup]");
+  const consentKey = "elma-site-privacy-v1";
+  let savedConsent = "";
+  try {
+    savedConsent = localStorage.getItem(consentKey) || "";
+  } catch {
+    savedConsent = "";
+  }
+  consentPopup.hidden = Boolean(savedConsent);
+  consentPopup.querySelectorAll("[data-privacy-choice]").forEach((button) => {
+    button.addEventListener("click", () => {
+      savedConsent = button.dataset.privacyChoice;
+      try {
+        localStorage.setItem(consentKey, savedConsent);
+      } catch {
+        // The choice still applies to the current page.
+      }
+      consentPopup.hidden = true;
+    });
+  });
+  document
+    .querySelector("[data-open-privacy]")
+    .addEventListener("click", () => {
+      consentPopup.hidden = false;
+      consentPopup.querySelector("[data-privacy-choice]").focus();
+    });
   function showError() {
     if (!failed) return;
     document.querySelectorAll(".widget-error").forEach((message) => {
@@ -34,7 +60,7 @@
       (data) =>
         new Promise((resolve, reject) => {
           const script = document.createElement("script");
-          script.src = "/widget.js";
+          script.src = "/widget.js?v=20260913-1";
           script.dataset.agent = data.publication_id;
           script.onload = resolve;
           script.onerror = reject;
