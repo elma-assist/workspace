@@ -6,7 +6,9 @@ async function openDraft(page: Page) {
   await page.getByRole("button", { name: "Open agent widget" }).click();
   await page.getByRole("button", { name: "Start a chat" }).click();
   const frame = page.frameLocator("iframe");
-  await frame.getByRole("button", { name: "Open side panel", exact: true }).click();
+  await frame
+    .getByRole("button", { name: "Open side panel", exact: true })
+    .click();
   await frame.getByRole("combobox", { name: "Start a request" }).click();
   await frame
     .getByRole("option", { name: "Repair request", exact: true })
@@ -30,11 +32,20 @@ for (const width of [1440, 390]) {
     await frame
       .getByRole("textbox", { name: /^Your name/ })
       .fill("Anton Autosaved");
+    await expect(
+      frame.getByRole("button", { name: "Save draft", exact: true }),
+    ).toHaveCount(0);
+    await expect(
+      frame.getByRole("checkbox", { name: "I have checked" }),
+    ).toHaveCount(0);
     const response = await (await saved).json();
     expect(Object.values(response.answers)).toContain("Anton Autosaved");
     await expect(
       frame.getByText("Draft saved.", { exact: false }),
     ).toBeVisible();
+    await expect(
+      frame.getByRole("button", { name: "Submit request", exact: true }),
+    ).toBeEnabled();
     await expect(
       frame.locator(".field-save-state").filter({ hasText: "Saved" }),
     ).toHaveCount(1);
@@ -125,26 +136,32 @@ test("failed save is visible, preserves input and blocks chat until retry succee
     .click();
   const message = frame.getByRole("textbox", { name: "Message", exact: true });
   await message.fill("Please check the current form and tell me my name.");
-  await frame.getByRole("textbox", { name: "Message", exact: true }).press("Enter");
+  await frame
+    .getByRole("textbox", { name: "Message", exact: true })
+    .press("Enter");
   await expect(message).toHaveValue(
     "Please check the current form and tell me my name.",
   );
   await expect(frame.locator(".message.user")).toHaveCount(0);
   await page.unroute("**/requests/*/answers");
-  await frame.getByRole("textbox", { name: "Message", exact: true }).press("Enter");
+  await frame
+    .getByRole("textbox", { name: "Message", exact: true })
+    .press("Enter");
   await expect(message).toHaveValue("");
   await expect(frame.locator(".message.assistant").last()).toContainText(
     "Anton Retry",
     { timeout: 45000 },
   );
-  await frame.getByRole("button", { name: "Open side panel", exact: true }).click();
+  await frame
+    .getByRole("button", { name: "Open side panel", exact: true })
+    .click();
   await expect(frame.getByRole("textbox", { name: /^Your name/ })).toHaveValue(
     "Anton Retry",
   );
   await expect(frame.getByText("Draft saved.", { exact: false })).toBeVisible();
 });
 
-test("autosaved manual answers and a photo submit only after explicit confirmation", async ({
+test("autosaved manual answers and a photo submit with one explicit action", async ({
   page,
 }) => {
   const frame = await openDraft(page);
@@ -162,8 +179,7 @@ test("autosaved manual answers and a photo submit only after explicit confirmati
   await expect(frame.getByRole("img", { name: "window.png" })).toBeVisible();
   await expect(
     frame.getByRole("button", { name: "Submit request", exact: true }),
-  ).toBeDisabled();
-  await frame.getByRole("checkbox", { name: "I have checked" }).check();
+  ).toBeEnabled();
   await frame
     .getByRole("button", { name: "Submit request", exact: true })
     .click();

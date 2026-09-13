@@ -78,7 +78,7 @@ for (const width of [1440, 390]) {
       .getByRole("link", { name: "Forms", exact: true })
       .click();
     await expect(page).toHaveURL(/\/forms$/);
-    await page.goto("/app/nordhaus/people/invite");
+    await page.goto("/app/nordhaus/employees/invite");
     await expect(
       page.getByRole("heading", { name: "Invite a teammate" }),
     ).toBeVisible();
@@ -218,9 +218,14 @@ test("widget URL restores conversation, selected request and share modal", async
     .getByRole("option", { name: "Repair request", exact: true })
     .click();
   await frame.getByRole("button", { name: "Open form", exact: true }).click();
+  const draftSaved = page.waitForResponse(
+    (r) =>
+      r.ok() && r.request().method() === "POST" && r.url().endsWith("/answers"),
+  );
   await frame
     .getByRole("textbox", { name: /^Your name/ })
     .fill("Route test Anton");
+  await draftSaved;
   await expect(frame.getByText("Draft saved.", { exact: false })).toBeVisible();
   const requestId = new URL(page.url()).searchParams.get("elma-active-request");
   expect(requestId).toBeTruthy();
@@ -286,7 +291,7 @@ test("saved form, member access, request and history panels open directly", asyn
   const members = await (await page.request.get(base + "/members")).json();
   const member = members.find((m: { role: string }) => m.role === "employee");
   expect(member).toBeTruthy();
-  await page.goto(`/app/nordhaus/people/${member.id}/access`);
+  await page.goto(`/app/nordhaus/employees/${member.id}/access`);
   expect(new URL(page.url()).search).toBe("");
   await expect(
     page.getByRole("heading", { name: "Access for " + member.name }),

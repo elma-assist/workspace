@@ -85,7 +85,6 @@ test("form builder, agent opens and fills a real draft, photos, submission and g
     path: "artifacts/forms/draft-desktop.png",
     fullPage: true,
   });
-  await frame.getByRole("checkbox", { name: "I have checked" }).check();
   await frame
     .getByRole("button", { name: "Submit request", exact: true })
     .click();
@@ -136,9 +135,14 @@ test("mobile form stays separate from conversation and preserves a manual draft"
     .getByRole("option", { name: "Repair request", exact: true })
     .click();
   await frame.getByRole("button", { name: "Open form", exact: true }).click();
+  const draftSaved = page.waitForResponse(
+    (r) =>
+      r.ok() && r.request().method() === "POST" && r.url().endsWith("/answers"),
+  );
   await frame
     .getByRole("textbox", { name: /^Your name/ })
     .fill("Mobile resident");
+  await draftSaved;
   await expect(frame.getByText("Draft saved.", { exact: false })).toBeVisible();
   await frame
     .getByRole("button", { name: "Close side panel", exact: true })

@@ -2,7 +2,7 @@
 import { useDraftAutosave } from "../../hooks/useDraftAutosave";
 import { Button } from "../AsyncAction";
 import { useEffect, useRef, useState } from "react";
-import { Stack, Text, Group, Badge, Checkbox, Alert } from "@mantine/core";
+import { Stack, Text, Group, Badge, Alert } from "@mantine/core";
 import { Session } from "../../lib/api";
 import {
   RequestRecord,
@@ -29,8 +29,7 @@ export function RequestDraft({
   const auto = useDraftAutosave(incoming, session, changed);
   const value = auto.record,
     dirty = auto.edits;
-  const [confirmed, setConfirmed] = useState(false),
-    [busy, setBusy] = useState(false),
+  const [busy, setBusy] = useState(false),
     [uploading, setUploading] = useState(false),
     [error, setError] = useState("");
   const isDirty = Object.keys(dirty).length > 0;
@@ -48,7 +47,6 @@ export function RequestDraft({
     notifyFlush.current?.(auto.draft.flush);
     return () => notifyFlush.current?.(null);
   }, [auto.draft]);
-  useEffect(() => setConfirmed(false), [value.revision]);
   const base = `${requestBase(session)}/requests/${value.id}`;
   const save = auto.draft.flush;
   async function act(fn: () => Promise<void>) {
@@ -94,7 +92,6 @@ export function RequestDraft({
               variant="light"
               onClick={() => {
                 auto.draft.resolve(true);
-                setConfirmed(false);
               }}
             >
               Keep my changes
@@ -124,7 +121,6 @@ export function RequestDraft({
         readOnly={readOnly || busy}
         change={(id, v) => {
           auto.draft.change(id, v);
-          setConfirmed(false);
         }}
         images={(f) => (
           <Stack gap="xs">
@@ -185,30 +181,22 @@ export function RequestDraft({
       />
       <ErrorNotice error={error || auto.error} />
       {!readOnly ? (
-        <>
-          <Checkbox
-            label="I have checked these details and want to submit this request"
-            checked={confirmed}
-            disabled={isDirty || auto.saving || busy}
-            onChange={(e) => setConfirmed(e.currentTarget.checked)}
-          />
-          <Button
-            disabled={!confirmed || isDirty || auto.saving || busy}
-            onClick={() =>
-              act(async () => {
-                const r = await formFetch<RequestRecord>(
-                  base + "/submit",
-                  session,
-                  "POST",
-                  { revision: value.revision, confirmed: true },
-                );
-                changed(r);
-              })
-            }
-          >
-            Submit request
-          </Button>
-        </>
+        <Button
+          disabled={isDirty || auto.saving || busy || conflict}
+          onClick={() =>
+            act(async () => {
+              const r = await formFetch<RequestRecord>(
+                base + "/submit",
+                session,
+                "POST",
+                { revision: value.revision, confirmed: true },
+              );
+              changed(r);
+            })
+          }
+        >
+          Submit request
+        </Button>
       ) : (
         <Alert color="green">
           Request received. Your team will review it. You can check its status

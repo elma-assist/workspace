@@ -94,9 +94,6 @@ body {
   margin-top: var(--mantine-spacing-lg);
   font-size: var(--mantine-font-size-sm);
 }
-.sources details {
-  padding: var(--mantine-spacing-sm) 0;
-}
 .conversation {
   height: min(82dvh, 800px);
   display: flex;

@@ -619,27 +619,33 @@ h1 span {
 .conversation-heading .preview-tag {
   margin-left: auto;
 }
-.building-lines {
-  display: grid;
-  grid-template-columns: repeat(3, 34px);
-  gap: 15px;
-  margin: 32px auto 24px;
-  width: fit-content;
-  border: 1px solid #bdcbb3;
-  border-bottom: 0;
-  border-radius: 65px 65px 0 0;
-  padding: 26px 30px 0;
-  color: var(--muted);
+.hero-building {
+  display: block;
+  width: min(100%, 320px);
+  height: auto;
+  margin: 22px auto 18px;
+  stroke: var(--muted);
+  stroke-width: 1.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
-.building-lines span {
-  grid-column: 1 / -1;
-  text-align: center;
-  font-size: 13px;
+.building-facade {
+  fill: var(--paper);
 }
-.building-lines i {
-  height: 30px;
-  border: 1px solid #bdcbb3;
-  background: #e3ead9;
+.building-side,
+.building-windows {
+  fill: var(--pale);
+}
+.building-roof {
+  fill: color-mix(in srgb, var(--accent) 18%, var(--paper));
+}
+.building-door,
+.building-trees {
+  fill: color-mix(in srgb, var(--sage) 65%, var(--pale));
+}
+.building-ground,
+.building-detail {
+  stroke: color-mix(in srgb, var(--muted) 70%, var(--pale));
 }
 .hero-bubble {
   padding: 18px 22px;
@@ -891,24 +897,6 @@ h1 span {
   letter-spacing: 0.07em;
   text-transform: uppercase;
 }
-.capability-flow {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 14px;
-  margin-top: 12px;
-  padding: 18px 24px;
-  color: var(--muted);
-  background: #e3ebda;
-  border-radius: 14px;
-  font-size: 11px;
-  font-weight: 600;
-}
-.capability-flow .lucide {
-  width: 14px;
-  height: 14px;
-  color: var(--accent);
-}
 .repair-example {
   align-items: center;
   grid-template-columns: 0.85fr 1.15fr;
@@ -969,18 +957,12 @@ h1 span {
   border-radius: 14px;
   background: #faf7f0;
 }
-.mistral-monogram {
-  display: grid;
-  place-items: center;
-  width: 44px;
-  height: 44px;
-  flex: 0 0 44px;
-  color: #fff8ea;
-  background: var(--accent);
-  border-radius: 10px;
-  font:
-    700 20px Manrope,
-    var(--font);
+.mistral-logo {
+  display: block;
+  width: 49px;
+  height: 35px;
+  flex: 0 0 49px;
+  object-fit: contain;
 }
 .mistral-signature > span:nth-child(2) {
   display: grid;
@@ -1356,14 +1338,6 @@ h1 span {
   }
   .capability-icon {
     margin-bottom: 26px;
-  }
-  .capability-flow {
-    flex-direction: column;
-    padding: 18px;
-    text-align: center;
-  }
-  .capability-flow .lucide {
-    transform: rotate(90deg);
   }
   .benefit-card {
     padding: 24px;

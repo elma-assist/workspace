@@ -169,7 +169,7 @@ for (const size of sizes) {
         .getByLabel("Breadcrumbs")
         .getByRole("link", { name: "Knowledge", exact: true })
         .click();
-      await navigate(page, "People");
+      await navigate(page, "Employees");
       await expect(
         page.getByText("admin@example.com", { exact: true }),
       ).toBeVisible();
@@ -179,7 +179,7 @@ for (const size of sizes) {
       await fits(page);
       await page
         .getByLabel("Breadcrumbs")
-        .getByRole("link", { name: "People", exact: true })
+        .getByRole("link", { name: "Employees", exact: true })
         .click();
       await navigate(page, "Usage");
       await expect(page.locator(".stats")).toBeVisible();

@@ -55,6 +55,20 @@ export default defineConfig({
     baseURL: "http://localhost:8180",
     viewport: { width: 1440, height: 1000 },
     screenshot: "only-on-failure",
+    storageState: {
+      cookies: [],
+      origins: [
+        {
+          origin: "http://localhost:8180",
+          localStorage: [
+            {
+              name: "elma-site-privacy-v1",
+              value: "accepted",
+            },
+          ],
+        },
+      ],
+    },
   },
   reporter: [["list"]],
 });

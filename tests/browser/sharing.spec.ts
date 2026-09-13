@@ -79,10 +79,17 @@ test("publish link and printable QR; shared conversation resumes on another devi
       .getByRole("option", { name: "Repair request", exact: true })
       .click();
     await owner.getByRole("button", { name: "Open form", exact: true }).click();
+    const draftSaved = owner.waitForResponse(
+      (r) =>
+        r.ok() &&
+        r.request().method() === "POST" &&
+        r.url().endsWith("/answers"),
+    );
     await owner
       .getByRole("textbox", { name: /^Your name/ })
       .fill("Anton shared");
     await owner.getByLabel("Address / apartment").fill("Donkerstrasse 77");
+    await draftSaved;
     await expect(
       owner.getByText("Draft saved.", { exact: false }),
     ).toBeVisible();

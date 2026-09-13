@@ -14,6 +14,8 @@
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180" />
     <link rel="stylesheet" href="/landing.css?v=20260913-1" />
     <link rel="stylesheet" href="/workflow.css?v=20260913-1" />
+    <link rel="stylesheet" href="/teammate.css?v=20260913-1" />
+    <script src="/teammate.js?v=20260913-1" defer></script>
     <script src="/locale.js?v=20260913-1" defer></script>
     <script src="/landing.js?v=20260913-1" defer></script>
     <script src="/workflow.js?v=20260913-1" defer></script>
@@ -131,9 +133,27 @@
             </div>
             <span class="preview-tag">Illustration</span>
           </div>
-          <div class="building-lines" aria-hidden="true">
-            <span>12</span><i></i><i></i><i></i><i></i><i></i><i></i>
-          </div>
+          <svg class="hero-building" viewBox="0 0 320 170" fill="none" aria-hidden="true">
+            <path class="building-ground" d="M22 153h276" />
+            <path class="building-side" d="M73 80h31v73H73zM228 80h25v73h-25z" />
+            <path class="building-roof" d="m65 80 23-22h28v22ZM219 58h19l23 22h-42Z" />
+            <path class="building-facade" d="M101 56h128v97H101z" />
+            <path class="building-roof" d="M207 34V15h12v31M90 57l75-42 75 42Z" />
+            <path class="building-detail" d="M101 106h128M101 61h128" />
+            <g class="building-windows">
+              <path d="M115 72h20v23h-20zM155 72h20v23h-20zM195 72h20v23h-20zM115 116h20v23h-20zM195 116h20v23h-20z" />
+              <path d="M81 94h12v18H81zM237 94h9v18h-9z" />
+            </g>
+            <path class="building-detail" d="M125 72v23M115 83h20M165 72v23M155 83h20M205 72v23M195 83h20M125 116v23M115 127h20M205 116v23M195 127h20" />
+            <path class="building-door" d="M153 153v-27a12 12 0 0 1 24 0v27" />
+            <path class="building-detail" d="M165 126v27m-12-27h24M148 153h34" />
+            <circle class="building-detail" cx="165" cy="42" r="7" />
+            <path class="building-detail" d="M165 35v14m-7-7h14" />
+            <g class="building-trees">
+              <path d="M47 139c-27 0-25-25-15-30-7-21 24-29 29-9 19 7 13 39-14 39ZM280 139c-20 0-23-22-12-29-2-19 24-22 25-2 16 12 6 31-13 31Z" />
+            </g>
+            <path class="building-detail" d="M47 116v37m0-20-9-8m9 0 9-8m224 7v29m0-19 8-8" />
+          </svg>
           <div class="hero-bubble resident">
             <small>Resident</small>
             <p>My heating isn’t working. Can you help?</p>
@@ -224,6 +244,51 @@
             From the first question to the details needed for follow-up, Elma
             helps move the conversation forward.
           </p>
+        </div>
+        <div class="teammate-motion" aria-hidden="true">
+          <div class="teammate-grid"></div>
+          <div class="teammate-inputs">
+            <div class="teammate-message">
+              <svg viewBox="0 0 24 24">
+                <path d="M4 4h16v12H9l-5 4Z" />
+                <path d="M8 8h8M8 12h5" />
+              </svg>
+              <div><i></i><i></i></div>
+              <span class="teammate-dot"></span>
+            </div>
+            <div class="teammate-voice">
+              <svg viewBox="0 0 24 24">
+                <rect x="9" y="3" width="6" height="12" rx="3" />
+                <path d="M6 11a6 6 0 0 0 12 0M12 17v4M9 21h6" />
+              </svg>
+              <div class="teammate-wave">
+                <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+              </div>
+            </div>
+          </div>
+          <div class="teammate-link teammate-link-in"><span></span></div>
+          <div class="teammate-core">
+            <div class="teammate-orbit"></div>
+            <div class="teammate-orbit teammate-orbit-inner"></div>
+            <div class="teammate-logo">
+              <img src="/favicon.svg" width="80" height="80" alt="" />
+            </div>
+            <span class="teammate-core-name">elma</span>
+          </div>
+          <div class="teammate-link teammate-link-out"><span></span></div>
+          <div class="teammate-request">
+            <div class="teammate-request-top">
+              <svg viewBox="0 0 24 24">
+                <path d="M14 2H5v20h14V7ZM14 2v6h5M9 12h6M9 16h6" /></svg
+              ><span>Process</span><span class="teammate-check">✓</span>
+            </div>
+            <div class="teammate-field"><span></span><i></i></div>
+            <div class="teammate-field"><span></span><i></i></div>
+            <div class="teammate-field"><span></span><i></i></div>
+            <div class="teammate-handoff">
+              <span class="teammate-person">↗</span><span>Help coordinate</span>
+            </div>
+          </div>
         </div>
         <ol class="process-grid">
           <li>
@@ -347,21 +412,6 @@
               conversation and follow up on missing responses.
             </p>
           </article>
-        </div>
-        <div class="capability-flow" aria-label="Elma communication workflow">
-          <span>Resident contact</span>
-          <svg class="lucide" aria-hidden="true">
-            <use href="/icons.svg#arrow-right" />
-          </svg>
-          <span>Structured request</span>
-          <svg class="lucide" aria-hidden="true">
-            <use href="/icons.svg#arrow-right" />
-          </svg>
-          <span>CRM or ERP update</span>
-          <svg class="lucide" aria-hidden="true">
-            <use href="/icons.svg#arrow-right" />
-          </svg>
-          <span>Resident informed</span>
         </div>
       </section>
       <section
@@ -616,7 +666,7 @@
             realtime services are deployed on EU-hosted infrastructure.
           </p>
           <div class="mistral-signature">
-            <span class="mistral-monogram" aria-hidden="true">M</span>
+            <img class="mistral-logo" src="/mistral-logo.svg" width="49" height="35" alt="" />
             <span><small>Core AI by</small><strong>Mistral AI</strong></span>
             <span class="paris-note">Paris · France · EU</span>
           </div>

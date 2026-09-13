@@ -168,14 +168,14 @@ CSS-индикатор поверх кнопки.
 
 | Экран                           | Путь                                                                                               |
 | ------------------------------- | -------------------------------------------------------------------------------------------------- |
-| Раздел                          | `/agents`, `/knowledge`, `/forms`, `/requests`, `/people`, `/conversations`, `/usage`, `/settings` |
+| Раздел                          | `/agents`, `/knowledge`, `/forms`, `/requests`, `/employees`, `/conversations`, `/usage`, `/settings` |
 | Создание организации            | `/app/new`                                                                                         |
 | Агент                           | `/agents/new` или `/agents/<id>/edit`                                                              |
 | Публикация агента               | `/agents/<id>/publish`                                                                             |
 | База знаний и загрузка          | `/knowledge/<id>` и `/knowledge/<id>/add-document`                                                 |
 | Создание базы знаний            | `/knowledge/new`                                                                                   |
 | Форма                           | `/forms/new` или `/forms/<id>/edit`                                                                |
-| Приглашение / доступ сотрудника | `/people/invite` и `/people/<id>/access`                                                           |
+| Приглашение / доступ сотрудника | `/employees/invite` и `/employees/<id>/access`                                                           |
 | Заявка                          | `/requests/<id>`                                                                                   |
 | История разговора               | `/conversations/<id>`                                                                              |
 | Живой разговор                  | `/agents/<agent-id>/conversations/<conversation-id>`                                               |

@@ -17,6 +17,8 @@
   gap: 10px;
   border: 0;
   border-radius: 30px;
+  outline: 3px solid #738b57;
+  outline-offset: 3px;
   padding: 16px 22px;
   background: #233e30;
   color: #f5f9ed;
@@ -113,6 +115,9 @@
 .elma-launcher:focus-visible {
   outline: 3px solid #738b57;
   outline-offset: 3px;
+}
+.elma-launcher:focus-visible {
+  outline-offset: 6px;
 }
 @media (max-height: 480px) {
   .elma-eyebrow {

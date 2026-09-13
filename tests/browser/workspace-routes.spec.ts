@@ -16,13 +16,13 @@ test("workspace sections use paths, preserve the shell and restore on reload and
       })
     ).ok(),
   ).toBeTruthy();
-  await page.goto("/app/nordhaus/people");
+  await page.goto("/app/nordhaus/employees");
   await expect(
-    page.getByRole("heading", { name: "People", exact: true }),
+    page.getByRole("heading", { name: "Employees", exact: true }),
   ).toBeVisible();
   await page.reload();
   await expect(
-    page.getByRole("heading", { name: "People", exact: true }),
+    page.getByRole("heading", { name: "Employees", exact: true }),
   ).toBeVisible();
   await page
     .locator(".mantine-AppShell-root")
@@ -33,7 +33,7 @@ test("workspace sections use paths, preserve the shell and restore on reload and
     "Forms",
     "Requests",
     "Conversations",
-    "People",
+    "Employees",
     "Usage",
     "Settings",
   ]) {
@@ -57,9 +57,9 @@ test("workspace sections use paths, preserve the shell and restore on reload and
     page.getByRole("heading", { name: "Organization settings", exact: true }),
   ).toBeVisible();
   const other = await context.newPage();
-  await other.goto("/app/nordhaus/people");
+  await other.goto("/app/nordhaus/employees");
   await expect(
-    other.getByRole("heading", { name: "People", exact: true }),
+    other.getByRole("heading", { name: "Employees", exact: true }),
   ).toBeVisible();
   await other.close();
   await page.goto("/app/nordhaus");
@@ -70,7 +70,7 @@ test("workspace sections use paths, preserve the shell and restore on reload and
     page.getByRole("heading", { name: "404", exact: true }),
   ).toBeVisible();
   await page.setViewportSize({ width: 390, height: 844 });
-  await page.goto("/app/nordhaus/people");
+  await page.goto("/app/nordhaus/employees");
   await page.getByRole("button", { name: "Toggle navigation" }).click();
   await page.getByRole("link", { name: "Forms", exact: true }).click();
   await expect(page).toHaveURL(/\/app\/nordhaus\/forms$/);

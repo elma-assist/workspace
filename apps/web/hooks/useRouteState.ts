@@ -97,7 +97,7 @@ function parseAdmin(pathname: string): RouteValues {
     if (rest[0] === "new") values["form-editor"] = "new";
     else if (rest[0] && rest[1] === "edit")
       values["form-editor"] = decode(rest[0]);
-  } else if (section === "people") {
+  } else if (section === "employees") {
     if (rest[0] === "invite") values["invite-teammate"] = "open";
     else if (rest[0] && rest[1] === "access")
       values["member-access"] = decode(rest[0]);
@@ -168,7 +168,7 @@ function buildAdmin(pathname: string, values: RouteValues) {
     return values["form-editor"] === "new"
       ? `${base}/new`
       : `${base}/${encode(values["form-editor"])}/edit`;
-  if (section === "people") {
+  if (section === "employees") {
     if (values["invite-teammate"] === "open") return `${base}/invite`;
     if (values["member-access"])
       return `${base}/${encode(values["member-access"])}/access`;

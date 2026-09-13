@@ -1,0 +1,405 @@
+/* Original CSS illustration inspired by beam / border-beam motion patterns.
+   One finite scene; IntersectionObserver starts it when the section is visible. */
+.teammate-motion {
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  grid-template-columns: 1fr 0.55fr 150px 0.55fr 1fr;
+  align-items: center;
+  max-width: 1000px;
+  min-height: 280px;
+  margin: 40px auto 0;
+  padding: 30px 25px;
+  border: 1px solid color-mix(in srgb, var(--sage) 18%, transparent);
+  border-radius: 24px;
+  background: radial-gradient(
+    ellipse at 50% 50%,
+    color-mix(in srgb, var(--sage) 12%, transparent),
+    transparent 65%
+  );
+  overflow: hidden;
+  --scene-duration: 4800ms;
+}
+.teammate-grid {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  opacity: 0.18;
+  background-image: radial-gradient(var(--sage) 0.7px, transparent 0.7px);
+  background-size: 20px 20px;
+  mask-image: linear-gradient(
+    90deg,
+    transparent,
+    black 30%,
+    black 70%,
+    transparent
+  );
+}
+.teammate-motion svg {
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.teammate-inputs {
+  display: grid;
+  gap: 16px;
+  position: relative;
+  z-index: 2;
+}
+.teammate-message,
+.teammate-voice {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 20px 16px;
+  border: 1px solid color-mix(in srgb, var(--sage) 28%, transparent);
+  border-radius: 13px;
+  background: var(--ink);
+  box-shadow: 0 12px 28px #0002;
+  color: var(--sage);
+}
+.teammate-message {
+  transform: rotate(-4deg);
+}
+.teammate-voice {
+  margin-left: 22px;
+  transform: rotate(3deg);
+}
+.teammate-message > div {
+  flex: 1;
+  display: grid;
+  gap: 9px;
+}
+.teammate-message i {
+  display: block;
+  height: 4px;
+  width: 100%;
+  background: var(--sage);
+  opacity: 0.6;
+  border-radius: 4px;
+}
+.teammate-message i:last-child {
+  width: 65%;
+  opacity: 0.25;
+}
+.teammate-dot {
+  width: 6px;
+  height: 6px;
+  background: var(--sage);
+  border-radius: 50%;
+}
+.teammate-wave {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 5px;
+  height: 24px;
+  flex: 1;
+}
+.teammate-wave i {
+  height: 8px;
+  width: 3px;
+  border-radius: 3px;
+  background: var(--sage);
+}
+.teammate-wave i:nth-child(3n) {
+  height: 24px;
+}
+.teammate-wave i:nth-child(3n + 1) {
+  height: 15px;
+}
+.teammate-link {
+  height: 1px;
+  background: color-mix(in srgb, var(--sage) 25%, transparent);
+  position: relative;
+  overflow: visible;
+}
+.teammate-link span {
+  display: block;
+  position: absolute;
+  width: 42px;
+  max-width: 90%;
+  height: 2px;
+  top: -1px;
+  background: linear-gradient(90deg, transparent, var(--sage));
+  box-shadow: 8px 0 12px color-mix(in srgb, var(--sage) 55%, transparent);
+  opacity: 0;
+}
+.teammate-core {
+  position: relative;
+  height: 180px;
+  display: grid;
+  place-items: center;
+}
+.teammate-logo {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 92px;
+  height: 92px;
+  border-radius: 25px;
+  background: var(--sage);
+  box-shadow: 0 0 55px color-mix(in srgb, var(--sage) 15%, transparent);
+}
+.teammate-logo img {
+  display: block;
+}
+.teammate-orbit {
+  position: absolute;
+  width: 156px;
+  height: 156px;
+  border: 1px solid color-mix(in srgb, var(--sage) 20%, transparent);
+  border-radius: 50%;
+}
+.teammate-orbit::after {
+  content: "";
+  position: absolute;
+  top: 18px;
+  left: 18px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--sage);
+  box-shadow: 0 0 14px var(--sage);
+}
+.teammate-orbit-inner {
+  width: 126px;
+  height: 126px;
+  transform: rotate(180deg);
+  border-style: dashed;
+  opacity: 0.4;
+}
+.teammate-orbit-inner::after {
+  width: 4px;
+  height: 4px;
+  top: 15px;
+  left: 15px;
+}
+.teammate-core-name {
+  position: absolute;
+  bottom: -10px;
+  font-size: 15px;
+  letter-spacing: 3px;
+  color: var(--sage);
+}
+.teammate-request {
+  position: relative;
+  z-index: 2;
+  padding: 18px;
+  border: 1px solid color-mix(in srgb, var(--sage) 40%, transparent);
+  border-radius: 14px;
+  background: var(--ink);
+  box-shadow: 0 18px 40px #0002;
+  transform: rotate(2deg);
+}
+.teammate-request-top {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 12px;
+  color: var(--sage);
+  padding-bottom: 16px;
+}
+.teammate-check {
+  margin-left: auto;
+}
+.teammate-field {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+  margin: 13px 0;
+}
+.teammate-field span {
+  width: 28%;
+  height: 4px;
+  border-radius: 4px;
+  background: var(--sage);
+  opacity: 0.25;
+}
+.teammate-field i {
+  flex: 1;
+  height: 5px;
+  border-radius: 4px;
+  background: var(--sage);
+  opacity: 0.7;
+  transform-origin: left;
+}
+.teammate-field:nth-child(3) i {
+  margin-right: 20%;
+}
+.teammate-handoff {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  border-top: 1px solid color-mix(in srgb, var(--sage) 20%, transparent);
+  margin-top: 18px;
+  padding-top: 12px;
+  font-size: 10px;
+  color: var(--sage);
+}
+.teammate-person {
+  display: grid;
+  place-items: center;
+  width: 23px;
+  height: 23px;
+  background: var(--sage);
+  color: var(--ink);
+  border-radius: 50%;
+  font-size: 16px;
+}
+.teammate-motion.is-playing .teammate-orbit {
+  animation: teammate-orbit var(--scene-duration) ease-in-out both;
+}
+.teammate-motion.is-playing .teammate-orbit-inner {
+  animation-direction: reverse;
+}
+.teammate-motion.is-playing .teammate-logo {
+  animation: teammate-breathe var(--scene-duration) ease-in-out both;
+}
+.teammate-motion.is-playing .teammate-link span {
+  animation: teammate-beam 1500ms ease-in-out 2 both;
+}
+.teammate-motion.is-playing .teammate-link-out span {
+  animation-delay: 1200ms;
+}
+.teammate-motion.is-playing .teammate-wave i {
+  animation: teammate-wave 600ms ease-in-out 4 alternate;
+}
+.teammate-motion.is-playing .teammate-wave i:nth-child(even) {
+  animation-delay: 150ms;
+}
+.teammate-motion.is-playing .teammate-field i {
+  animation: teammate-fill 900ms ease both;
+  animation-delay: 2400ms;
+}
+.teammate-motion.is-playing .teammate-field:nth-child(3) i {
+  animation-delay: 2700ms;
+}
+.teammate-motion.is-playing .teammate-field:nth-child(4) i {
+  animation-delay: 3000ms;
+}
+.teammate-motion.is-playing .teammate-check,
+.teammate-motion.is-playing .teammate-handoff {
+  animation: teammate-reveal 600ms ease 3700ms both;
+}
+.teammate-motion.is-paused *,
+.teammate-motion.is-paused *::after {
+  animation-play-state: paused !important;
+}
+@keyframes teammate-orbit {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes teammate-breathe {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  45% {
+    transform: scale(1.08);
+    box-shadow: 0 0 65px color-mix(in srgb, var(--sage) 35%, transparent);
+  }
+}
+@keyframes teammate-beam {
+  0% {
+    left: 0;
+    opacity: 0;
+    transform: translateX(-50%);
+  }
+  25%,
+  75% {
+    opacity: 1;
+  }
+  100% {
+    left: 100%;
+    opacity: 0;
+    transform: translateX(-50%);
+  }
+}
+@keyframes teammate-wave {
+  to {
+    transform: scaleY(0.35);
+  }
+}
+@keyframes teammate-fill {
+  from {
+    transform: scaleX(0);
+    opacity: 0;
+  }
+  to {
+    transform: scaleX(1);
+    opacity: 0.7;
+  }
+}
+@keyframes teammate-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@media (max-width: 650px) {
+  .teammate-motion {
+    grid-template-columns: 1fr 44px 1fr;
+    gap: 0;
+    padding: 24px 18px;
+    min-height: 320px;
+  }
+  .teammate-core {
+    grid-column: 1 / -1;
+    grid-row: 1;
+    height: 160px;
+    margin-bottom: 25px;
+  }
+  .teammate-inputs {
+    grid-column: 1;
+    grid-row: 2;
+    gap: 10px;
+  }
+  .teammate-link-in {
+    display: none;
+  }
+  .teammate-link-out {
+    grid-column: 2;
+    grid-row: 2;
+  }
+  .teammate-request {
+    grid-column: 3;
+    grid-row: 2;
+    padding: 12px;
+  }
+  .teammate-message,
+  .teammate-voice {
+    padding: 13px 10px;
+    gap: 8px;
+  }
+  .teammate-voice {
+    margin-left: 5px;
+  }
+  .teammate-request-top {
+    gap: 5px;
+    padding-bottom: 5px;
+  }
+  .teammate-handoff {
+    margin-top: 10px;
+    font-size: 9px;
+  }
+  .teammate-wave {
+    gap: 3px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .teammate-motion *,
+  .teammate-motion *::after {
+    animation: none !important;
+  }
+}

@@ -72,9 +72,9 @@ test("organization navigation, routed editors, document actions and responsive l
     .click();
   await page.setViewportSize({ width: 390, height: 844 });
   await page.getByRole("button", { name: "Toggle navigation" }).click();
-  await page.getByRole("link", { name: "People", exact: true }).click();
+  await page.getByRole("link", { name: "Employees", exact: true }).click();
   await expect(
-    page.getByRole("heading", { name: "People", exact: true }),
+    page.getByRole("heading", { name: "Employees", exact: true }),
   ).toBeVisible();
   expect(
     await page.evaluate(

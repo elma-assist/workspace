@@ -4,10 +4,18 @@ import {
   useRouteFlag,
   updateRoute,
 } from "../hooks/useRouteState";
-import { Button } from "./AsyncAction";
-import { Group, NavLink, Text } from "@mantine/core";
+import { ActionIcon } from "./AsyncAction";
+import {
+  Accordion,
+  Group,
+  NavLink,
+  Stack,
+  Text,
+  Title,
+  Tooltip,
+} from "@mantine/core";
 import { useState, useEffect } from "react";
-import { Trash2 } from "lucide-react";
+import { FileText, Trash2 } from "lucide-react";
 import { api, Organization, History as Conversation, Detail } from "../lib/api";
 import { Markdown } from "./Markdown";
 import { EmptyState, ErrorNotice, Status } from "./ui";
@@ -39,6 +47,12 @@ export function History({ org }: { org: Organization }) {
       active = false;
     };
   }, [org.id, conversationId]);
+  const sourcesByDocument = new Map<string, Set<string>>();
+  for (const source of selected?.sources ?? []) {
+    const excerpts = sourcesByDocument.get(source.name) ?? new Set<string>();
+    excerpts.add(source.excerpt.trim());
+    sourcesByDocument.set(source.name, excerpts);
+  }
   return (
     <>
       <div className="page-title">
@@ -65,17 +79,29 @@ export function History({ org }: { org: Organization }) {
         </div>
         {selected && (
           <div className="history-detail">
-            <Group justify="space-between" align="flex-start">
-              <h3>{selected.title}</h3>
+            <Group
+              justify="space-between"
+              align="flex-start"
+              wrap="nowrap"
+              mb="md"
+            >
+              <Title order={3} style={{ flex: 1, minWidth: 0 }}>
+                {selected.title}
+              </Title>
               {org.role !== "employee" && (
-                <Button
-                  color="red"
-                  variant="light"
-                  leftSection={<Trash2 size={16} />}
-                  onClick={() => setDeleting(true)}
-                >
-                  Delete conversation
-                </Button>
+                <Tooltip label="Delete conversation" withArrow>
+                  <ActionIcon
+                    aria-label="Delete conversation"
+                    type="button"
+                    color="gray"
+                    variant="subtle"
+                    size="lg"
+                    style={{ flexShrink: 0 }}
+                    onClick={() => setDeleting(true)}
+                  >
+                    <Trash2 size={18} />
+                  </ActionIcon>
+                </Tooltip>
               )}
             </Group>
             {selected.messages.map((m) => (
@@ -91,15 +117,43 @@ export function History({ org }: { org: Organization }) {
               </div>
             ))}
             {selected.sources.length > 0 && (
-              <div className="sources">
-                <strong>Knowledge used</strong>
-                {selected.sources.map((s, i) => (
-                  <details key={i}>
-                    <summary>{s.name}</summary>
-                    <p>{s.excerpt}</p>
-                  </details>
-                ))}
-              </div>
+              <Stack className="sources" gap="sm">
+                <Text fw={600} size="sm">
+                  Knowledge used
+                </Text>
+                <Accordion
+                  key={selected.id}
+                  variant="separated"
+                  radius="md"
+                  multiple
+                >
+                  {Array.from(sourcesByDocument, ([name, excerpts]) => (
+                    <Accordion.Item key={name} value={name}>
+                      <Accordion.Control
+                        icon={<FileText size={18} aria-hidden="true" />}
+                      >
+                        <Text size="sm" fw={500}>
+                          {name}
+                        </Text>
+                      </Accordion.Control>
+                      <Accordion.Panel>
+                        <Stack gap="sm">
+                          {Array.from(excerpts, (excerpt) => (
+                            <Text
+                              key={excerpt}
+                              size="sm"
+                              c="dimmed"
+                              style={{ whiteSpace: "pre-wrap" }}
+                            >
+                              {excerpt}
+                            </Text>
+                          ))}
+                        </Stack>
+                      </Accordion.Panel>
+                    </Accordion.Item>
+                  ))}
+                </Accordion>
+              </Stack>
             )}
           </div>
         )}

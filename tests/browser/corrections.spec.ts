@@ -21,9 +21,14 @@ test("agent corrects an explicitly requested saved address in the active draft",
   await f.getByRole("combobox", { name: "Start a request" }).click();
   await f.getByRole("option", { name: "Repair request", exact: true }).click();
   await f.getByRole("button", { name: "Open form", exact: true }).click();
+  const draftSaved = page.waitForResponse(
+    (r) =>
+      r.ok() && r.request().method() === "POST" && r.url().endsWith("/answers"),
+  );
   await f.getByRole("textbox", { name: /^Your name/ }).fill("Anton");
   await f.getByRole("textbox", { name: /^Email/ }).fill("anton@example.com");
   await f.getByLabel("Address / apartment").fill("Donkerstrasse 77");
+  await draftSaved;
   await expect(f.getByText("Draft saved.", { exact: false })).toBeVisible();
   const path = `/api/public/conversations/${session.id}/requests`;
   const headers = { "X-Guest-Token": session.guest_token };
@@ -32,7 +37,9 @@ test("agent corrects an explicitly requested saved address in the active draft",
     await f
       .getByRole("textbox", { name: "Message", exact: true })
       .fill(message);
-    await f.getByRole("textbox", { name: "Message", exact: true }).press("Enter");
+    await f
+      .getByRole("textbox", { name: "Message", exact: true })
+      .press("Enter");
     await expect(f.getByLabel("Address / apartment")).toHaveValue(address, {
       timeout: 45000,
     });

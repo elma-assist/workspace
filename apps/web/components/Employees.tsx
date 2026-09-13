@@ -1,13 +1,10 @@
 "use client";
-import {
-  useRouteState,
-  useRouteFlag,
-  updateRoute,
-} from "../hooks/useRouteState";
+import { useRouteState, useRouteFlag } from "../hooks/useRouteState";
 import { Button } from "./AsyncAction";
 import {
-  Table,
-  Paper,
+  Card,
+  SimpleGrid,
+  Title,
   Group,
   Avatar,
   Text,
@@ -28,7 +25,7 @@ interface Member {
   role: string;
   agent_ids: string[];
 }
-export function People({
+export function Employees({
   org,
   agents,
 }: {
@@ -160,7 +157,7 @@ export function People({
     <>
       <div className="page-title">
         <div>
-          <h1>People</h1>
+          <h1>Employees</h1>
           <p>Invite employees and manage their access to agents.</p>
         </div>
         <Button
@@ -181,70 +178,62 @@ export function People({
           (memberId && !edit ? "Teammate unavailable or still loading." : "")
         }
       />
-      <Paper withBorder radius="md">
-        <Table.ScrollContainer minWidth={600}>
-          <Table horizontalSpacing="lg" verticalSpacing="md">
-            <Table.Thead>
-              <Table.Tr>
-                <Table.Th>Teammate</Table.Th>
-                <Table.Th>Role</Table.Th>
-                <Table.Th>Agent access</Table.Th>
-              </Table.Tr>
-            </Table.Thead>
-            <Table.Tbody>
-              {members.map((m) => (
-                <Table.Tr
-                  key={m.id}
-                  className={m.role === "employee" ? "object-row" : undefined}
-                  role={m.role === "employee" ? "link" : undefined}
-                  tabIndex={m.role === "employee" ? 0 : undefined}
-                  aria-label={
-                    m.role === "employee"
-                      ? `Edit access for ${m.name}`
-                      : undefined
-                  }
-                  onClick={() => m.role === "employee" && setEdit(m)}
-                  onKeyDown={(event) => {
-                    if (
-                      m.role === "employee" &&
-                      (event.key === "Enter" || event.key === " ")
-                    ) {
-                      event.preventDefault();
-                      setEdit(m);
-                    }
-                  }}
-                >
-                  <Table.Td>
-                    <Group>
-                      <Avatar size="sm">{m.name[0]}</Avatar>
-                      <div>
-                        <Text size="sm" fw={500}>
-                          {m.name}
-                        </Text>
-                        <Text size="xs" c="dimmed">
-                          {m.email}
-                        </Text>
-                      </div>
-                    </Group>
-                  </Table.Td>
-                  <Table.Td>
-                    <Badge variant="light">{m.role}</Badge>
-                  </Table.Td>
-                  <Table.Td>
-                    {m.role === "employee" ? (
-                      <Text size="sm">{m.agent_ids.length} agents</Text>
-                    ) : (
-                      <Text size="sm" c="dimmed">
-                        All agents
-                      </Text>
-                    )}
-                  </Table.Td>
-                </Table.Tr>
-              ))}
-            </Table.Tbody>
-          </Table>
-        </Table.ScrollContainer>
-      </Paper>
+      <SimpleGrid cols={{ base: 1, md: 2, xl: 3 }}>
+        {members.map((m) => (
+          <Card
+            key={m.id}
+            component="a"
+            href={
+              m.role === "employee"
+                ? `/app/${org.slug}/employees/${m.id}/access`
+                : undefined
+            }
+            withBorder
+            radius="md"
+            padding="lg"
+            className={m.role === "employee" ? "object-card" : undefined}
+            aria-label={
+              m.role === "employee" ? `Edit access for ${m.name}` : undefined
+            }
+            onClick={(event) => {
+              if (
+                m.role === "employee" &&
+                !event.metaKey &&
+                !event.ctrlKey &&
+                !event.shiftKey &&
+                !event.altKey
+              ) {
+                event.preventDefault();
+                setEdit(m);
+              }
+            }}
+          >
+            <Stack gap="lg">
+              <Group wrap="nowrap" align="flex-start">
+                <Avatar radius="md" style={{ flexShrink: 0 }}>
+                  {m.name[0]}
+                </Avatar>
+                <div style={{ minWidth: 0 }}>
+                  <Title order={2} size="h4">
+                    {m.name}
+                  </Title>
+                  <Text size="sm" c="dimmed">
+                    {m.email}
+                  </Text>
+                </div>
+              </Group>
+              <Group justify="space-between" gap="xs">
+                <Badge variant="light">{m.role}</Badge>
+                <Text size="sm" c="dimmed">
+                  {m.role === "employee"
+                    ? `${m.agent_ids.length} ${m.agent_ids.length === 1 ? "agent" : "agents"}`
+                    : "All agents"}
+                </Text>
+              </Group>
+            </Stack>
+          </Card>
+        ))}
+      </SimpleGrid>
     </>
   );
 }

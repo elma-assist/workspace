@@ -24,7 +24,9 @@ test("widget restores conversation history and selected draft; agent continues t
   });
   const say = async (text: string) => {
     await f.getByRole("textbox", { name: "Message", exact: true }).fill(text);
-    await f.getByRole("textbox", { name: "Message", exact: true }).press("Enter");
+    await f
+      .getByRole("textbox", { name: "Message", exact: true })
+      .press("Enter");
   };
   await say(
     "Please open the repair form. My name is Anton. Save my name now. Remember my reference code: emerald bicycle.",
@@ -99,7 +101,12 @@ test("widget restores conversation history and selected draft; agent continues t
   await f.getByRole("combobox", { name: "Start a request" }).click();
   await f.getByRole("option", { name: "Repair request", exact: true }).click();
   await f.getByRole("button", { name: "Open form", exact: true }).click();
+  const secondDraftSaved = page.waitForResponse(
+    (r) =>
+      r.ok() && r.request().method() === "POST" && r.url().endsWith("/answers"),
+  );
   await f.getByRole("textbox", { name: /^Your name/ }).fill("Second request");
+  await secondDraftSaved;
   await expect(f.getByText("Draft saved.", { exact: false })).toBeVisible();
   await f.getByRole("button", { name: "All requests", exact: true }).click();
   await f.getByRole("button", { name: /Repair request.*New/ }).click();

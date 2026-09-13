@@ -54,7 +54,7 @@ import { Logo, Modal, EditorPage, ErrorNotice } from "./ui";
 import { Auth } from "./Auth";
 import { Agents } from "./Agents";
 import { Knowledge } from "./Knowledge";
-import { People } from "./People";
+import { Employees } from "./Employees";
 import { Usage } from "./Usage";
 import { History } from "./History";
 import { Chat } from "./Chat";
@@ -65,7 +65,7 @@ type Page =
   | "Agents"
   | "Knowledge"
   | "Conversations"
-  | "People"
+  | "Employees"
   | "Usage"
   | "Settings"
   | "Forms"
@@ -76,7 +76,7 @@ const navigation = [
   { name: "Forms", icon: FileText },
   { name: "Requests", icon: ClipboardList },
   { name: "Conversations", icon: MessageSquare },
-  { name: "People", icon: Users },
+  { name: "Employees", icon: Users },
   { name: "Usage", icon: ChartNoAxesCombined },
   { name: "Settings", icon: Settings },
 ] as const;
@@ -116,7 +116,7 @@ export function Workspace() {
     }
     if (section === "forms")
       return routeParts[0] === "new" ? "Create form" : "Edit form";
-    if (section === "people")
+    if (section === "employees")
       return routeParts[0] === "invite" ? "Invite teammate" : "Edit access";
     if (section === "requests") return "Request details";
     if (section === "conversations") return "Conversation";
@@ -433,8 +433,8 @@ export function Workspace() {
                 )}
                 {page === "Forms" && <Forms key={org.id} org={org} />}
                 {page === "Requests" && <Requests key={org.id} org={org} />}
-                {page === "People" && (
-                  <People key={org.id} org={org} agents={agents} />
+                {page === "Employees" && (
+                  <Employees key={org.id} org={org} agents={agents} />
                 )}
                 {page === "Usage" && <Usage key={org.id} org={org} />}
                 {page === "Conversations" && <History key={org.id} org={org} />}

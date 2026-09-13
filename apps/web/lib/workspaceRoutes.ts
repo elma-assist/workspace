@@ -4,7 +4,7 @@ export const workspaceSections = [
   "forms",
   "requests",
   "conversations",
-  "people",
+  "employees",
   "usage",
   "settings",
 ] as const;
@@ -63,7 +63,7 @@ export function isWorkspaceObjectRoute(
       (route.length === 1 && route[0] === "new") ||
       (route.length === 2 && route[1] === "edit")
     );
-  if (section === "people")
+  if (section === "employees")
     return (
       (route.length === 1 && route[0] === "invite") ||
       (route.length === 2 && route[1] === "access")

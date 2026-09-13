@@ -107,11 +107,6 @@
     "Send and collect forms": "Formulare versenden und erfassen",
     "Deliver forms to many residents, help complete them in the conversation and follow up on missing responses.":
       "Formulare an viele Bewohner senden, beim Ausfüllen im Gespräch helfen und fehlende Rückmeldungen nachverfolgen.",
-    "Elma communication workflow": "Kommunikationsablauf mit Elma",
-    "Resident contact": "Bewohnerkontakt",
-    "Structured request": "Strukturiertes Anliegen",
-    "CRM or ERP update": "CRM- oder ERP-Aktualisierung",
-    "Resident informed": "Bewohner informiert",
     "05 / One everyday example": "05 / Ein Beispiel aus dem Alltag",
     "“My heating": "„Meine Heizung",
     "isn’t working.”": "funktioniert nicht.“",
