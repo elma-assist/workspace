@@ -1,0 +1,153 @@
+.elma-system {
+  max-width: 1440px;
+  margin: auto;
+  padding: 64px 5%;
+  background: var(--paper);
+  border-bottom: 1px solid var(--line);
+}
+.elma-system-heading {
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  align-items: end;
+  gap: 48px;
+  margin-bottom: 36px;
+}
+.elma-system-heading h2 {
+  font-size: clamp(28px, 3.3vw, 44px);
+  line-height: 1.15;
+  letter-spacing: -0.04em;
+  margin: 16px 0 0;
+}
+.elma-system-heading > p {
+  color: var(--muted);
+  font-size: 15px;
+  margin: 0;
+  max-width: 430px;
+}
+.elma-system-flow {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 20px minmax(0, 1fr) 20px minmax(0, 1fr) 20px minmax(0, 1fr);
+  gap: 10px;
+  align-items: stretch;
+}
+.elma-system-stage {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+}
+.elma-system-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+  padding-bottom: 6px;
+}
+.elma-system-node {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 17px 13px;
+  flex: 1;
+  background: var(--pale);
+}
+.elma-system .lucide {
+  flex: 0 0 18px;
+  width: 18px;
+  height: 18px;
+  margin-top: 2px;
+}
+.elma-system-node h3 {
+  font-size: 14px;
+  line-height: 1.4;
+  margin: 0 0 6px;
+  overflow-wrap: anywhere;
+}
+.elma-system-node p {
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--muted);
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+.elma-system-arrow {
+  align-self: center;
+  font-size: 22px;
+  color: var(--muted);
+}
+.elma-system-agent {
+  border-radius: 16px;
+  background: var(--ink);
+  color: var(--paper);
+  padding: 20px;
+}
+.elma-system-agent .elma-system-label {
+  color: var(--sage);
+}
+.elma-system-agent-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.elma-system-agent-brand strong {
+  font-size: 24px;
+}
+.elma-system-agent > p {
+  font-size: 13px;
+  line-height: 1.5;
+  color: color-mix(in srgb, var(--paper) 80%, var(--ink));
+  margin: 0;
+}
+.elma-system-roles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: auto;
+}
+.elma-system-roles span {
+  border: 1px solid color-mix(in srgb, var(--paper) 30%, transparent);
+  padding: 5px 8px;
+  font-size: 10px;
+  border-radius: 6px;
+}
+.elma-system-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px 32px;
+  align-items: center;
+  margin-top: 28px;
+  padding-top: 22px;
+  border-top: 1px solid var(--line);
+}
+.elma-system-actions > span {
+  color: var(--muted);
+  font-size: 12px;
+  margin-right: auto;
+}
+.elma-system-actions > div {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+}
+@media (max-width: 1050px) {
+  .elma-system-flow {
+    grid-template-columns: minmax(0, 1fr) 20px minmax(0, 1fr);
+  }
+  .elma-system-flow > .elma-system-arrow:nth-child(4) {
+    grid-column: 1 / -1;
+    justify-self: center;
+    transform: rotate(90deg);
+  }
+}
+@media (max-width: 600px) {
+  .elma-system { padding: 44px 6%; }
+  .elma-system-heading { grid-template-columns: 1fr; gap: 18px; }
+  .elma-system-flow { grid-template-columns: minmax(0, 1fr); gap: 14px; }
+  .elma-system-arrow { justify-self: center; transform: rotate(90deg); }
+  .elma-system-agent { padding: 22px; }
+  .elma-system-actions { gap: 16px; }
+  .elma-system-actions > span { width: 100%; }
+}
