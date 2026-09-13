@@ -51,6 +51,10 @@ services:
     volumes:
       - seaweed:/data
       - ${ELMA_SHARED_DIR:-/opt/elma/shared}/s3.json:/etc/seaweed/s3.json:ro
+    healthcheck:
+      test: [CMD, nc, -z, 127.0.0.1, "8333"]
+      interval: 3s
+      retries: 30
   livekit:
     <<: *service
     image: livekit/livekit-server:v1.13.6
@@ -64,7 +68,7 @@ services:
     command: [sh, -c, "python -m app.migrate && python -m app.seed && uvicorn app.main:app --host 0.0.0.0 --port 8000"]
     depends_on:
       postgres: {condition: service_healthy}
-      seaweedfs: {condition: service_started}
+      seaweedfs: {condition: service_healthy}
     healthcheck:
       test: [CMD, python, -c, "import urllib.request; urllib.request.urlopen('http://localhost:8000/api/health')"]
       interval: 10s
@@ -80,6 +84,11 @@ services:
     <<: *app
     image: ghcr.io/elma-assist/workspace-agent-worker:${IMAGE_TAG:?Set IMAGE_TAG}
     stop_grace_period: 120s
+    healthcheck:
+      test: [CMD, python, -c, "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8081/')"]
+      interval: 10s
+      retries: 18
+      start_period: 30s
     depends_on:
       api: {condition: service_healthy}
       livekit: {condition: service_started}

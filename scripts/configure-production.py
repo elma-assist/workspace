@@ -8,6 +8,7 @@ from pathlib import Path
 os.umask(0o077)
 shared = Path(os.environ.get("ELMA_SHARED_DIR", "/opt/elma/shared"))
 shared.mkdir(parents=True, exist_ok=True)
+os.chmod(shared, 0o700)
 env = shared / "runtime.env"
 if env.exists():
     raise SystemExit("Production configuration already exists; leaving it unchanged.")
@@ -40,6 +41,7 @@ env.write_text("\n".join(f"{k}={v}" for k, v in values.items()) + "\n")
     "credentials": [{"accessKey": "elma", "secretKey": s3}],
     "actions": ["Admin", "Read", "Write", "List", "Tagging"],
 }]}))
+os.chmod(shared / "s3.json", 0o644)  # UID 1000 in SeaweedFS; parent stays private.
 (shared / "access.md").write_text(
     "# Initial pilot access\n\nhttps://elma-assist.de/app/nordhaus\n\n"
     "Administrator: admin@example.com\nEmployee: member@example.com\n"

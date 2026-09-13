@@ -1,0 +1,12 @@
+[Unit]
+Description=Elma database and document backup
+Requires=docker.service
+After=docker.service
+ConditionPathExists=/opt/elma/current/scripts/backup-production.sh
+
+[Service]
+Type=oneshot
+User=deploy
+Group=deploy
+UMask=0077
+ExecStart=/opt/elma/current/scripts/backup-production.sh

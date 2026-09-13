@@ -3,7 +3,9 @@
 set -Eeuo pipefail
 umask 077
 sha=${1:?Commit SHA required}
+registry_user=${2:?GitHub actor required}
 [[ "$sha" =~ ^[a-f0-9]{40}$ ]] || exit 2
+[[ "$registry_user" =~ ^[a-zA-Z0-9_-]+(\[bot\])?$ ]] || exit 2
 root=/opt/elma
 release="$root/releases/$sha"
 export IMAGE_TAG="$sha"
@@ -13,7 +15,7 @@ flock -n 9 || { echo 'Another deployment is running'; exit 1; }
 export DOCKER_CONFIG
 DOCKER_CONFIG=$(mktemp -d)
 trap 'rm -rf "$DOCKER_CONFIG"' EXIT
-docker login ghcr.io -u elma-assist --password-stdin
+docker login ghcr.io -u "$registry_user" --password-stdin
 compose=(docker compose --env-file "$ELMA_SHARED_DIR/runtime.env" -f "$release/infra/compose.production.yaml")
 "${compose[@]}" config --quiet
 "${compose[@]}" pull
@@ -22,6 +24,12 @@ if [[ -L "$root/current" ]]; then
   "$root/current/scripts/backup-production.sh"
 fi
 "${compose[@]}" up -d --wait --wait-timeout 240 --remove-orphans
+for domain in elma-assist.de rtc.elma-assist.de files.elma-assist.de; do
+  # Validate origin certificates directly, even when Cloudflare proxies the host.
+  # S3 may return 403 at its root; curl still verifies the TLS certificate.
+  curl --silent --show-error --retry 12 --retry-all-errors --retry-delay 5 \
+    --resolve "$domain:443:127.0.0.1" "https://$domain/" -o /dev/null
+done
 for url in https://elma-assist.de/api/health https://elma-assist.de/app https://elma-assist.de/; do
   curl --fail --silent --show-error --retry 12 --retry-all-errors --retry-delay 5 "$url" -o /dev/null
 done

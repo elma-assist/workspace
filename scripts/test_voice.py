@@ -6,6 +6,7 @@ Uses existing provider keys locally; never writes credentials or tokens to repor
 import asyncio
 from array import array
 import json
+import os
 import time
 import re
 import wave
@@ -18,6 +19,9 @@ from livekit.plugins import mistralai
 
 ROOT = Path(__file__).resolve().parents[1]
 load_dotenv(ROOT / ".env.local")
+BASE_URL = os.environ.get("ELMA_TEST_URL", "http://localhost:8180").rstrip("/")
+OUTPUT = ROOT / "artifacts" / ("production-voice" if BASE_URL.startswith("https://") else "local-voice")
+OUTPUT.mkdir(parents=True, exist_ok=True)
 
 
 async def synthesize(text: str) -> tuple[bytes, int]:
@@ -38,12 +42,12 @@ async def check(
     form_values: dict[str, str] | None = None,
 ):
     pcm, rate = await synthesize(question)
-    async with httpx.AsyncClient(base_url="http://localhost:8180") as client:
+    async with httpx.AsyncClient(base_url=BASE_URL) as client:
         pub = (await client.get("/api/demo")).json()["publication_id"]
         response = await client.post(
             f"/api/public/{pub}/sessions",
             json={"mode": "voice"},
-            headers={"Origin": "http://localhost:8180"},
+            headers={"Origin": BASE_URL},
         )
         response.raise_for_status()
         session = response.json()
@@ -147,7 +151,7 @@ async def check(
             await room.disconnect()
             for task in tasks:
                 task.cancel()
-        with wave.open(str(ROOT / f"artifacts/voice-{language}.wav"), "wb") as out:
+        with wave.open(str(OUTPUT / f"voice-{language}.wav"), "wb") as out:
             out.setnchannels(1)
             out.setsampwidth(2)
             out.setframerate(24000)
@@ -194,7 +198,7 @@ async def main():
         result = await check(*case)
         results.append(result)
         print(json.dumps(result, ensure_ascii=False), flush=True)
-    (ROOT / "artifacts/voice-check.json").write_text(
+    (OUTPUT / "voice-check.json").write_text(
         json.dumps(results, indent=2, ensure_ascii=False)
     )
 

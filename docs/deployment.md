@@ -8,6 +8,10 @@ OpenAPI drift detection, worker unit tests, backup restoration and browser smoke
 checks. PRs run checks only. Live AI/voice tests require provider credentials and
 are run separately; CI never receives production provider keys.
 
+Run the paid synthetic voice smoke test from a trusted workstation after deployment:
+`ELMA_TEST_URL=https://elma-assist.de .venv/bin/python scripts/test_voice.py`.
+Results and synthesized audio are saved under `artifacts/production-voice/`.
+
 After successful checks, four linux/amd64 images are published to GHCR with the
 full commit SHA. The production job uploads that exact revision over SSH, pulls
 images, backs up the previous installation, applies migrations and waits for
@@ -58,7 +62,9 @@ docker compose --env-file /opt/elma/shared/runtime.env -f infra/compose.producti
 ./scripts/backup-production.sh
 ```
 
-Backups run before updates and nightly via a systemd timer. They stay on this
+Backups run before updates and nightly via a systemd timer. Unit files are in
+`infra/systemd/`; install them into `/etc/systemd/system/` and enable
+`elma-backup.timer`. They stay on this
 server; independent off-server backup storage must be configured separately.
 Monitor disk space and copy backups off-server before pruning old ones.
 

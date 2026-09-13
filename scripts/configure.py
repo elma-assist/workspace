@@ -8,6 +8,7 @@ from pathlib import Path
 root = Path(__file__).resolve().parents[1]
 local = root / "infra/local"
 local.mkdir(parents=True, exist_ok=True)
+os.chmod(local, 0o700)
 env = local / "runtime.env"
 if not env.exists():
     password, service, s3, livekit = [secrets.token_hex(24) for _ in range(4)]
@@ -46,6 +47,9 @@ if not env.exists():
 for path in local.iterdir():
     if path.is_file():
         os.chmod(path, 0o600)
+# The image drops to UID 1000; the private parent directory protects this file
+# on the host, while its file bind mount is readable inside that container.
+os.chmod(local / "s3.json", 0o644)
 values = dict(
     line.split("=", 1) for line in env.read_text().splitlines() if "=" in line
 )
