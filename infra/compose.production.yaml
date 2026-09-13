@@ -1,0 +1,111 @@
+name: elma
+
+x-service: &service
+  restart: unless-stopped
+  logging:
+    driver: json-file
+    options: {max-size: "10m", max-file: "3"}
+
+x-app: &app
+  <<: *service
+  env_file: ["${ELMA_SHARED_DIR:-/opt/elma/shared}/runtime.env"]
+
+services:
+  traefik:
+    <<: *service
+    image: traefik:v3.6
+    command:
+      - --providers.file.filename=/etc/traefik/routes.yml
+      - --entrypoints.web.address=:80
+      - --entrypoints.web.http.redirections.entrypoint.to=websecure
+      - --entrypoints.web.http.redirections.entrypoint.scheme=https
+      - --entrypoints.websecure.address=:443
+      - --entrypoints.websecure.http.tls.certresolver=letsencrypt
+      - --certificatesresolvers.letsencrypt.acme.storage=/acme/acme.json
+      - --certificatesresolvers.letsencrypt.acme.httpchallenge.entrypoint=web
+      - --ping=true
+    ports: ["80:80", "443:443"]
+    volumes:
+      - ./routes.production.yml:/etc/traefik/routes.yml:ro
+      - certificates:/acme
+    healthcheck:
+      test: [CMD, traefik, healthcheck, --ping]
+      interval: 10s
+      retries: 6
+  postgres:
+    <<: *service
+    image: pgvector/pgvector:pg17
+    environment:
+      POSTGRES_DB: elma
+      POSTGRES_USER: elma
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD:?Set DATABASE_PASSWORD}
+    volumes: ["postgres:/var/lib/postgresql/data"]
+    healthcheck:
+      test: [CMD-SHELL, "pg_isready -U elma"]
+      interval: 3s
+      retries: 30
+  seaweedfs:
+    <<: *service
+    image: chrislusf/seaweedfs:4.17
+    command: "server -dir=/data -s3 -s3.config=/etc/seaweed/s3.json -ip=seaweedfs -volume.max=20 -master.volumeSizeLimitMB=100"
+    volumes:
+      - seaweed:/data
+      - ${ELMA_SHARED_DIR:-/opt/elma/shared}/s3.json:/etc/seaweed/s3.json:ro
+  livekit:
+    <<: *service
+    image: livekit/livekit-server:v1.13.6
+    command: ["--config", "/etc/livekit.yaml"]
+    ports: ["7881:7881/tcp", "7882:7882/udp"]
+    volumes:
+      - ${ELMA_SHARED_DIR:-/opt/elma/shared}/livekit.yaml:/etc/livekit.yaml:ro
+  api:
+    <<: *app
+    image: ghcr.io/elma-assist/workspace-api:${IMAGE_TAG:?Set IMAGE_TAG}
+    command: [sh, -c, "python -m app.migrate && python -m app.seed && uvicorn app.main:app --host 0.0.0.0 --port 8000"]
+    depends_on:
+      postgres: {condition: service_healthy}
+      seaweedfs: {condition: service_started}
+    healthcheck:
+      test: [CMD, python, -c, "import urllib.request; urllib.request.urlopen('http://localhost:8000/api/health')"]
+      interval: 10s
+      retries: 18
+      start_period: 30s
+  indexer:
+    <<: *app
+    image: ghcr.io/elma-assist/workspace-api:${IMAGE_TAG:?Set IMAGE_TAG}
+    command: [python, -m, app.indexer]
+    depends_on:
+      api: {condition: service_healthy}
+  agent-worker:
+    <<: *app
+    image: ghcr.io/elma-assist/workspace-agent-worker:${IMAGE_TAG:?Set IMAGE_TAG}
+    stop_grace_period: 120s
+    depends_on:
+      api: {condition: service_healthy}
+      livekit: {condition: service_started}
+  event-relay:
+    <<: *app
+    image: ghcr.io/elma-assist/workspace-agent-worker:${IMAGE_TAG:?Set IMAGE_TAG}
+    command: [python, events.py]
+    depends_on:
+      api: {condition: service_healthy}
+  web:
+    <<: *service
+    image: ghcr.io/elma-assist/workspace-web:${IMAGE_TAG:?Set IMAGE_TAG}
+    environment: {PORT: "3000", HOSTNAME: "0.0.0.0"}
+    healthcheck:
+      test: [CMD, node, -e, "fetch('http://127.0.0.1:3000/app').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 10s
+      retries: 12
+  landing:
+    <<: *service
+    image: ghcr.io/elma-assist/workspace-landing:${IMAGE_TAG:?Set IMAGE_TAG}
+    healthcheck:
+      test: [CMD, wget, -q, --spider, "http://127.0.0.1/"]
+      interval: 10s
+      retries: 12
+
+volumes:
+  postgres:
+  seaweed:
+  certificates:

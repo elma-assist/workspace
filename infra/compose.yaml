@@ -1,0 +1,66 @@
+name: elma
+services:
+  traefik:
+    image: traefik:v3.6
+    command:
+      - --providers.file.filename=/etc/traefik/routes.yml
+      - --entrypoints.web.address=:80
+    ports: ["127.0.0.1:8180:80"]
+    volumes: ["./routes.yml:/etc/traefik/routes.yml:ro"]
+  postgres:
+    image: pgvector/pgvector:pg17
+    environment:
+      POSTGRES_DB: elma
+      POSTGRES_USER: elma
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+    volumes: ["postgres:/var/lib/postgresql/data"]
+    healthcheck:
+      test: [CMD-SHELL, "pg_isready -U elma"]
+      interval: 3s
+      retries: 20
+  seaweedfs:
+    image: chrislusf/seaweedfs:4.17
+    command: "server -dir=/data -s3 -s3.config=/etc/seaweed/s3.json -ip=seaweedfs -volume.max=20 -master.volumeSizeLimitMB=100"
+    volumes: ["seaweed:/data", "./local/s3.json:/etc/seaweed/s3.json:ro"]
+  livekit:
+    image: livekit/livekit-server:v1.13.6
+    command: ["--config", "/etc/livekit.yaml"]
+    volumes: ["./local/livekit.yaml:/etc/livekit.yaml:ro"]
+    ports: ["127.0.0.1:7881:7881/tcp", "127.0.0.1:7882:7882/udp"]
+  api:
+    build: {context: .., dockerfile: services/api/Dockerfile}
+    env_file: ["../.env.local", "./local/runtime.env"]
+    depends_on:
+      postgres: {condition: service_healthy}
+      seaweedfs: {condition: service_started}
+    command: ["sh", "-c", "python -m app.migrate && python -m app.seed && uvicorn app.main:app --host 0.0.0.0 --port 8000"]
+    healthcheck:
+      test: [CMD, python, -c, "import urllib.request; urllib.request.urlopen('http://localhost:8000/api/health')"]
+      interval: 10s
+      retries: 12
+  indexer:
+    build: {context: .., dockerfile: services/api/Dockerfile}
+    env_file: ["../.env.local", "./local/runtime.env"]
+    command: [python, -m, app.indexer]
+    depends_on:
+      api: {condition: service_healthy}
+  agent-worker:
+    build: {context: .., dockerfile: services/agent-worker/Dockerfile}
+    env_file: ["../.env.local", "./local/runtime.env"]
+    depends_on:
+      api: {condition: service_healthy}
+      livekit: {condition: service_started}
+  web:
+    build: {context: .., dockerfile: apps/web/Dockerfile}
+    environment: {PORT: "3000", HOSTNAME: "0.0.0.0"}
+  event-relay:
+    build: {context: .., dockerfile: services/agent-worker/Dockerfile}
+    env_file: ["./local/runtime.env"]
+    command: [python, events.py]
+    depends_on:
+      api: {condition: service_healthy}
+  landing:
+    build: {context: .., dockerfile: apps/landing/Dockerfile}
+volumes:
+  postgres:
+  seaweed:

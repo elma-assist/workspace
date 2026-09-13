@@ -1,0 +1,124 @@
+name: Checks and deployment
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: pipeline-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  checks:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Scan committed secrets
+        run: docker run --rm -v "$PWD:/repo" zricethezav/gitleaks:v8.24.3 git /repo --redact
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - uses: astral-sh/setup-uv@v6
+        with:
+          python-version: '3.12'
+      - run: npm ci
+      - run: uv venv && uv pip install -r services/api/requirements.lock -r services/agent-worker/requirements.lock
+      - run: npm run typecheck && npm run test:ui && npx pyright
+      - run: python3 scripts/check-licenses.py
+      - run: cp .env.example .env.local && python3 scripts/configure.py
+      - name: Validate production configuration
+        run: IMAGE_TAG=${{ github.sha }} ELMA_SHARED_DIR="$PWD/infra/local" docker compose --env-file infra/local/runtime.env -f infra/compose.production.yaml config --quiet
+      - name: Start isolated test stack
+        run: docker compose --env-file infra/local/runtime.env -f infra/compose.yaml up -d --build --wait --wait-timeout 180 api web landing traefik
+      - name: API integration and migration checks
+        run: docker compose --env-file infra/local/runtime.env -f infra/compose.yaml exec -T api python -m pytest -q
+      - run: sh scripts/contracts.sh && git diff --exit-code packages/contracts
+      - run: PYTHONPATH=packages:services/agent-worker .venv/bin/python -m unittest discover -s services/agent-worker/tests -v
+      - name: Backup and restore verification
+        run: ./scripts/backup.sh && python3 scripts/check_restore.py
+      - run: npx playwright install --with-deps chromium
+      - name: Browser checks without paid AI services
+        run: npx playwright test --project=desktop tests/browser/landing.spec.ts tests/browser/landing-locale.spec.ts tests/browser/onboarding.spec.ts
+      - name: Failure diagnostics
+        if: failure()
+        run: docker compose --env-file infra/local/runtime.env -f infra/compose.yaml logs --tail=80 api web landing traefik
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: browser-failures
+          path: test-results/
+      - if: always()
+        run: docker compose --env-file infra/local/runtime.env -f infra/compose.yaml down -v
+  images:
+    needs: checks
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    permissions:
+      contents: read
+      packages: write
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - {name: api, dockerfile: services/api/Dockerfile}
+          - {name: agent-worker, dockerfile: services/agent-worker/Dockerfile}
+          - {name: web, dockerfile: apps/web/Dockerfile}
+          - {name: landing, dockerfile: apps/landing/Dockerfile}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ${{ matrix.dockerfile }}
+          platforms: linux/amd64
+          push: true
+          tags: ghcr.io/elma-assist/workspace-${{ matrix.name }}:${{ github.sha }}
+          labels: org.opencontainers.image.source=https://github.com/elma-assist/workspace
+          cache-from: type=gha,scope=${{ matrix.name }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.name }}
+  deploy:
+    needs: images
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    environment:
+      name: production
+      url: https://elma-assist.de
+    permissions:
+      contents: read
+      packages: read
+    steps:
+      - uses: actions/checkout@v4
+      - name: Configure deployment SSH key and pinned host identity
+        env:
+          SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+          KNOWN_HOSTS: ${{ secrets.DEPLOY_KNOWN_HOSTS }}
+        run: |
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$SSH_KEY" > ~/.ssh/id_ed25519
+          printf '%s\n' "$KNOWN_HOSTS" > ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/id_ed25519 ~/.ssh/known_hosts
+      - name: Upload release and deploy verified images
+        env:
+          DEPLOY_HOST: ${{ vars.DEPLOY_HOST }}
+          GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RELEASE_SHA: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          ssh -o BatchMode=yes "deploy@$DEPLOY_HOST" "mkdir -p /opt/elma/releases/$RELEASE_SHA"
+          git archive HEAD | ssh -o BatchMode=yes "deploy@$DEPLOY_HOST" "tar -x -C /opt/elma/releases/$RELEASE_SHA"
+          printf '%s' "$GHCR_TOKEN" | ssh -o BatchMode=yes "deploy@$DEPLOY_HOST" "bash /opt/elma/releases/$RELEASE_SHA/scripts/deploy.sh $RELEASE_SHA"
+      - name: Remove deployment key
+        if: always()
+        run: rm -f ~/.ssh/id_ed25519

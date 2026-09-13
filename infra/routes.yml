@@ -1,0 +1,29 @@
+http:
+  routers:
+    api:
+      rule: PathPrefix(`/api`)
+      service: api
+      entryPoints: [web]
+    livekit:
+      rule: PathPrefix(`/rtc`)
+      service: livekit
+      entryPoints: [web]
+    files:
+      rule: Host(`files.localhost`)
+      priority: 100
+      service: files
+      entryPoints: [web]
+    web:
+      rule: Path(`/app`) || PathPrefix(`/app/`) || PathPrefix(`/_next/`) || Path(`/widget`) || PathPrefix(`/widget/`) || PathPrefix(`/a/`) || Path(`/s`) || PathPrefix(`/s/`)
+      service: web
+      entryPoints: [web]
+    landing:
+      rule: PathPrefix(`/`)
+      service: landing
+      entryPoints: [web]
+  services:
+    api: {loadBalancer: {servers: [{url: "http://api:8000"}]}}
+    livekit: {loadBalancer: {servers: [{url: "http://livekit:7880"}]}}
+    files: {loadBalancer: {servers: [{url: "http://seaweedfs:8333"}]}}
+    web: {loadBalancer: {servers: [{url: "http://web:3000"}]}}
+    landing: {loadBalancer: {servers: [{url: "http://landing:80"}]}}

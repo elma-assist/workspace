@@ -1,0 +1,112 @@
+.call-control {
+  --call-energy: 0;
+  position: relative;
+  display: inline-flex;
+  flex: 0 0 auto;
+}
+.call-control .call-button {
+  min-width: var(--ai-size);
+  min-height: var(--ai-size);
+  transform: scale(calc(1 + var(--call-energy) * 0.07));
+  transition:
+    transform 120ms ease-out,
+    background-color 150ms ease-out;
+}
+.call-halo {
+  position: absolute;
+  inset: -3px;
+  border-radius: 50%;
+  border: 2px solid var(--mantine-color-red-6);
+  opacity: calc(var(--call-energy) * 0.5);
+  transform: scale(calc(1 + var(--call-energy) * 0.08));
+  transition:
+    opacity 120ms ease-out,
+    transform 120ms ease-out;
+  pointer-events: none;
+}
+.call-button svg {
+  opacity: calc(1 - var(--call-energy) * 0.4);
+  transition: opacity 140ms ease-out;
+}
+.call-control[data-speaking="true"] .call-button svg {
+  animation: call-vibration 220ms ease-in-out infinite;
+}
+@keyframes call-vibration {
+  0%,
+  100% {
+    transform: rotate(calc(var(--call-energy) * -5deg));
+  }
+  50% {
+    transform: rotate(calc(var(--call-energy) * 5deg));
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .call-control .call-button,
+  .call-halo {
+    transform: none;
+    transition: none;
+  }
+  .call-control[data-speaking="true"] .call-button svg {
+    animation: none;
+  }
+}
+
+.call-direction {
+  display: inline-flex;
+  width: 16px;
+  height: 16px;
+  flex: 0 0 16px;
+  color: var(--mantine-color-dimmed);
+  opacity: 1;
+  transition: opacity 140ms ease-out;
+}
+.call-direction-track {
+  display: flex;
+  align-items: center;
+  width: 16px;
+  height: 16px;
+}
+.call-direction-track svg {
+  flex: 0 0 12px;
+  opacity: 0.3;
+  animation: call-chevron-flow 900ms ease-in-out infinite;
+}
+.call-direction-track svg + svg {
+  margin-left: -6px;
+  animation-delay: 150ms;
+}
+.call-direction[data-direction="left"] .call-direction-track {
+  transform: rotate(180deg);
+}
+.call-direction[data-direction="none"] {
+  opacity: 0.45;
+}
+.call-direction[data-direction="none"] svg {
+  animation: none;
+  opacity: 1;
+  transform: none;
+}
+.call-direction[data-direction="none"] svg:first-child {
+  transform: rotate(180deg);
+}
+@keyframes call-chevron-flow {
+  0%,
+  100% {
+    opacity: 0.25;
+    transform: translateX(-1px);
+  }
+  45% {
+    opacity: 1;
+    transform: translateX(1px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .call-direction {
+    transition: none;
+  }
+  .call-direction-track svg {
+    animation: none;
+    opacity: 0.8;
+    transform: none;
+  }
+}

@@ -1,0 +1,15 @@
+.venv
+node_modules
+**/node_modules
+**/.next
+.env*
+infra/local
+__pycache__
+.git
+test-results
+infra/production
+artifacts
+console-recordings
+playwright-report
+.ruff_cache
+**/*.tsbuildinfo

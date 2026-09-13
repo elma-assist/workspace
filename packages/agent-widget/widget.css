@@ -1,0 +1,165 @@
+.elma-launcher,
+.elma-panel,
+.elma-panel * {
+  box-sizing: border-box;
+}
+.elma-launcher,
+.elma-panel button {
+  font: 500 14px system-ui;
+  cursor: pointer;
+}
+.elma-launcher {
+  position: fixed;
+  bottom: max(20px, env(safe-area-inset-bottom));
+  right: 20px;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  border: 0;
+  border-radius: 30px;
+  padding: 16px 22px;
+  background: #233e30;
+  color: #f5f9ed;
+  box-shadow: 0 8px 30px #12271d33;
+  z-index: 99999;
+}
+.elma-panel {
+  position: fixed;
+  background: #f8faf3;
+  border: 1px solid #dce5d3;
+  border-radius: 18px;
+  box-shadow: 0 20px 80px #17291e33;
+  z-index: 100000;
+  overflow: hidden;
+  font-family: system-ui;
+  color: #293d29;
+}
+.elma-panel svg,
+.elma-launcher svg {
+  display: block;
+  flex-shrink: 0;
+}
+.elma-panel iframe {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+.elma-intro {
+  height: 100%;
+  overflow: auto;
+  padding: 24px;
+}
+.elma-close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: auto;
+  width: 44px;
+  height: 44px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: inherit;
+}
+.elma-eyebrow {
+  margin-top: 24px;
+  color: #77886a;
+  font-size: 11px;
+  letter-spacing: 2px;
+}
+.elma-intro h2 {
+  font-size: 32px;
+  font-weight: 500;
+  line-height: 1.2;
+  margin: 16px 0;
+}
+.elma-intro p {
+  color: #617454;
+  font-size: 14px;
+  line-height: 1.7;
+}
+.elma-start {
+  display: grid;
+  gap: 12px;
+  margin-top: 28px;
+}
+.elma-start button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 48px;
+  padding: 12px;
+  border: 0;
+  border-radius: 10px;
+  background: #264332;
+  color: white;
+}
+.elma-start button[data-mode="voice"] {
+  background: #e4eedb;
+  color: #264332;
+}
+.elma-start button:disabled {
+  opacity: 0.65;
+  cursor: wait;
+}
+.elma-intro .elma-status {
+  font-size: 12px;
+  margin-top: 24px;
+  overflow-wrap: anywhere;
+}
+.elma-panel button:focus-visible,
+.elma-launcher:focus-visible {
+  outline: 3px solid #738b57;
+  outline-offset: 3px;
+}
+@media (max-height: 480px) {
+  .elma-eyebrow {
+    margin-top: 0;
+  }
+  .elma-start {
+    margin-top: 16px;
+  }
+}
+@media (max-width: 480px) {
+  .elma-launcher {
+    width: 56px;
+    height: 56px;
+    padding: 16px;
+    justify-content: center;
+  }
+  .elma-launcher span {
+    display: none;
+  }
+}
+
+.elma-panel button[aria-busy="true"] {
+  position: relative;
+  color: transparent;
+}
+.elma-panel button[aria-busy="true"] > * {
+  visibility: hidden;
+}
+.elma-panel button[aria-busy="true"]::after {
+  content: "";
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  left: calc(50% - 9px);
+  top: calc(50% - 9px);
+  border: 2px solid #adb5bd;
+  border-top-color: #228be6;
+  border-radius: 50%;
+  animation: elma-loading 0.7s linear infinite;
+}
+@keyframes elma-loading {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .elma-panel button[aria-busy="true"]::after {
+    animation-duration: 2s;
+  }
+}

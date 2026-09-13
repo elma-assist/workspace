@@ -1,0 +1,73 @@
+.agent-avatar {
+  width: var(--avatar-size, 48px);
+  height: var(--avatar-size, 48px);
+  flex: 0 0 var(--avatar-size, 48px);
+  display: grid;
+  place-items: center;
+  position: relative;
+}
+.agent-avatar-ring {
+  position: absolute;
+  inset: 0;
+  width: var(--avatar-size, 48px);
+  height: var(--avatar-size, 48px);
+  pointer-events: none;
+}
+.agent-avatar-ring circle {
+  fill: none;
+}
+.agent-avatar-track {
+  stroke: var(--mantine-color-gray-3);
+  stroke-width: 2;
+}
+.agent-avatar-signal {
+  stroke: var(--mantine-primary-color-filled);
+  stroke-linecap: round;
+  stroke-opacity: 0;
+  transition:
+    stroke-opacity 140ms ease-out,
+    stroke-width 140ms ease-out;
+  transform-origin: center;
+}
+.agent-avatar[data-phase="busy"] .agent-avatar-signal {
+  stroke-opacity: 1;
+  stroke-dasharray: 36 96;
+  animation: agent-avatar-spin 1.3s linear infinite;
+}
+.agent-avatar[data-phase="offline"] .agent-avatar-track {
+  stroke: var(--mantine-color-red-5);
+}
+.agent-avatar[data-online="true"] .agent-avatar-track {
+  stroke: var(--mantine-color-green-6);
+}
+.agent-avatar[data-online="true"] .agent-avatar-signal {
+  stroke: var(--mantine-color-green-9);
+}
+@keyframes agent-avatar-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .agent-avatar-signal {
+    transition: none;
+    animation: none !important;
+  }
+}
+.agent-description {
+  overflow-wrap: anywhere;
+}
+.conversation-header-actions {
+  flex-shrink: 0;
+}
+@media (max-width: 30em) {
+  .conversation-header {
+    flex-wrap: wrap;
+  }
+  .conversation-identity {
+    flex-basis: 100%;
+  }
+  .conversation-header-actions {
+    margin-left: auto;
+  }
+}

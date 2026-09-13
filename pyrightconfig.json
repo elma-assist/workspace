@@ -1,0 +1,12 @@
+{
+  "venvPath": ".",
+  "venv": ".venv",
+  "pythonVersion": "3.12",
+  "typeCheckingMode": "basic",
+  "include": ["services/api/app", "services/agent-worker", "packages/contracts/models.py"],
+  "executionEnvironments": [
+    {"root": "services/api", "extraPaths": ["packages"]},
+    {"root": "services/agent-worker", "extraPaths": ["packages"]},
+    {"root": "packages"}
+  ]
+}

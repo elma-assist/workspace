@@ -1,0 +1,25 @@
+{
+  "name": "elma-workspace",
+  "private": true,
+  "workspaces": [
+    "apps/web"
+  ],
+  "scripts": {
+    "dev": "npm run dev -w apps/web",
+    "build": "npm run build -w apps/web",
+    "typecheck": "npm run typecheck -w apps/web",
+    "test:e2e": "playwright test",
+    "test:ui": "tsx --tsconfig tests/ui/tsconfig.json --test tests/ui/*.test.tsx",
+    "build:widget": "node scripts/build-widget.mjs"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.56.0",
+    "@types/pngjs": "^6.0.5",
+    "jsqr": "^1.4.0",
+    "openapi-typescript": "^7.10.0",
+    "pngjs": "^7.0.0",
+    "prettier": "^3.9.6",
+    "pyright": "^1.1.414",
+    "tsx": "^4.23.13"
+  }
+}
