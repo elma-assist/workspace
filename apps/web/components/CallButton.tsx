@@ -1,4 +1,5 @@
 "use client";
+import { useWidgetText } from "./WidgetLanguage";
 import React from "react";
 import { Tooltip, VisuallyHidden } from "@mantine/core";
 import { useReducedMotion } from "@mantine/hooks";
@@ -20,10 +21,11 @@ export function CallButton({
   disabled: boolean;
   onClick: () => Promise<void>;
 }) {
+  const t = useWidgetText();
   const reduced = useReducedMotion();
   const energy =
     active && Number.isFinite(level) ? Math.max(0, Math.min(1, level)) : 0;
-  const label = voice ? "End call" : "Start call";
+  const label = voice ? t("End call") : t("Start call");
   return (
     <div
       className="call-control"
@@ -55,7 +57,7 @@ export function CallButton({
       </Tooltip>
       <VisuallyHidden
         role="meter"
-        aria-label="Your microphone level"
+        aria-label={t("Your microphone level")}
         aria-valuemin={0}
         aria-valuemax={100}
         aria-valuenow={Math.round(energy * 100)}

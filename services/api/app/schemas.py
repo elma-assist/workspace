@@ -49,6 +49,7 @@ class DocumentInput(Named):
 
 
 class PublicationInput(Contract):
+    language: Literal["en", "de"] = "en"
     enabled: bool
     origins: list[str] = Field(max_length=20)
 

@@ -1,4 +1,5 @@
 "use client";
+import { useWidgetText } from "./WidgetLanguage";
 import {
   updateRoute,
   useRouteFlag,
@@ -41,6 +42,7 @@ export function Chat({
   inline?: boolean;
   onInitialReady?: () => void;
 }) {
+  const t = useWidgetText();
   const c = useConversation(session);
   const [requestsLoading, setRequestsLoading] = useState(true);
   const initialReady = useRef(false);
@@ -67,7 +69,7 @@ export function Chat({
       setFormError(
         e instanceof Error
           ? e.message
-          : "Please save the form before continuing.",
+          : t("Please save the form before continuing."),
       );
     } finally {
       syncing.current = false;
@@ -118,7 +120,7 @@ export function Chat({
           <Group gap="sm" wrap="nowrap" className="conversation-identity">
             <AgentAvatar
               name={session.agent_name}
-              status={status}
+              status={t(status)}
               phase={avatarPhase(c.state, c.pending, c.mode === "voice")}
               level={c.levels.agent}
               online={ready}
@@ -132,28 +134,32 @@ export function Chat({
                 c="dimmed"
                 lineClamp={2}
                 className="agent-description"
-                title={session.agent_description || "AI assistant"}
+                title={session.agent_description || t("AI assistant")}
               >
-                {session.agent_description || "AI assistant"}
+                {session.agent_description || t("AI assistant")}
               </Text>
             </div>
           </Group>
           <Group gap="xs" wrap="nowrap" className="conversation-header-actions">
-            <Tooltip label="Share conversation">
+            <Tooltip label={t("Share conversation")}>
               <ActionIcon
                 variant="subtle"
                 size={36}
-                aria-label="Share conversation"
+                aria-label={t("Share conversation")}
                 onClick={() => setSharing(true)}
               >
                 <Share2 size={18} />
               </ActionIcon>
             </Tooltip>
-            <Tooltip label={panelOpen ? "Close side panel" : "Open side panel"}>
+            <Tooltip
+              label={panelOpen ? t("Close side panel") : t("Open side panel")}
+            >
               <ActionIcon
                 size={36}
                 variant={panelOpen ? "light" : "subtle"}
-                aria-label={panelOpen ? "Close side panel" : "Open side panel"}
+                aria-label={
+                  panelOpen ? t("Close side panel") : t("Open side panel")
+                }
                 aria-expanded={panelOpen}
                 aria-controls={panelId}
                 onClick={() => {
@@ -171,14 +177,14 @@ export function Chat({
             <Tooltip
               label={
                 formDirty
-                  ? "Save draft and close conversation"
-                  : "Close conversation"
+                  ? t("Save draft and close conversation")
+                  : t("Close conversation")
               }
             >
               <ActionIcon
                 variant="subtle"
                 size={44}
-                aria-label="Close conversation"
+                aria-label={t("Close conversation")}
                 onClick={close}
               >
                 <X size={18} />
@@ -189,13 +195,15 @@ export function Chat({
         <div
           className="chat-messages"
           role="log"
-          aria-label="Conversation messages"
+          aria-label={t("Conversation messages")}
         >
           {!c.messages.length && (
             <Center h="100%">
               <Stack align="center" gap="xs">
                 <Text fw={500}>
-                  {busy ? "Connecting to your agent" : "Start a conversation"}
+                  {busy
+                    ? t("Connecting to your agent")
+                    : t("Start a conversation")}
                 </Text>
                 <Text size="sm" c="dimmed">
                   Ask a question in English or German.
@@ -206,7 +214,7 @@ export function Chat({
           {c.messages.map((m) => (
             <div className={`message ${m.role}`} key={m.id}>
               <Text size="xs" c="dimmed" mb="xs">
-                {m.role === "assistant" ? session.agent_name : "You"}
+                {m.role === "assistant" ? session.agent_name : t("You")}
               </Text>
               {m.role === "assistant" ? (
                 <Markdown text={m.content} />
@@ -236,15 +244,15 @@ export function Chat({
               <TextInput
                 flex={1}
                 miw={0}
-                aria-label="Message"
+                aria-label={t("Message")}
                 enterKeyHint="send"
                 value={c.input}
                 onChange={(e) => c.setInput(e.target.value)}
-                placeholder="Message your agent · Enter to send"
+                placeholder={t("Message your agent · Enter to send")}
                 aria-busy={c.pending || formSyncing}
                 rightSection={
                   c.pending || formSyncing ? (
-                    <Loader size="xs" aria-label="Sending message" />
+                    <Loader size="xs" aria-label={t("Sending message")} />
                   ) : null
                 }
                 onKeyDown={(e) => {
@@ -262,7 +270,7 @@ export function Chat({
                   <>
                     <AgentAvatar
                       name={session.agent_name}
-                      status={status}
+                      status={t(status)}
                       phase={avatarPhase(
                         c.state,
                         c.pending,

@@ -7,12 +7,23 @@ import {
 import { PublicConversation } from "../../components/sharing/PublicConversation";
 import { useState, useEffect } from "react";
 import { Session } from "../../lib/api";
+import {
+  WidgetLanguageContext,
+  WidgetLanguage,
+} from "../../components/WidgetLanguage";
 import { Chat } from "../../components/Chat";
 export default function Widget() {
+  const [language, setLanguage] = useState<WidgetLanguage>("en");
   const [publication] = useRouteState("agent");
   const [standalone, setStandalone] = useState(false);
   const [session, setSession] = useState<Session | null>(null);
   useEffect(() => {
+    const locale =
+      new URLSearchParams(location.search).get("language") === "de"
+        ? "de"
+        : "en";
+    setLanguage(locale);
+    document.documentElement.lang = locale;
     setStandalone(window.parent === window);
     const receive = (e: MessageEvent) => {
       if (e.source !== window.parent) return;
@@ -83,15 +94,21 @@ export default function Widget() {
       <p>This widget link is incomplete.</p>
     );
   return session ? (
-    <Chat
-      inline
-      session={session}
-      onClose={() => {
-        setSession(null);
-        window.parent.postMessage({ type: "elma:close" }, "*");
-      }}
-    />
+    <WidgetLanguageContext.Provider value={language}>
+      <Chat
+        inline
+        session={session}
+        onClose={() => {
+          setSession(null);
+          window.parent.postMessage({ type: "elma:close" }, "*");
+        }}
+      />
+    </WidgetLanguageContext.Provider>
   ) : (
-    <div className="widget-wait">Connecting to your agent…</div>
+    <div className="widget-wait">
+      {language === "de"
+        ? "Verbindung zum Assistenten wird hergestellt…"
+        : "Connecting to your agent…"}
+    </div>
   );
 }

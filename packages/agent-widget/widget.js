@@ -1,6 +1,42 @@
 (() => {
   const icons = __ELMA_ICONS__;
   const script = document.currentScript;
+  const language = script.lang === "de" ? "de" : "en";
+  const labels =
+    language === "de"
+      ? {
+          launcher: "Mit elma sprechen",
+          open: "elma-Widget öffnen",
+          close: "Schließen",
+          widget: "elma KI-Assistent",
+          eyebrow: "DEIN KI-ASSISTENT",
+          heading: "Ein Gespräch<br>entfernt.",
+          intro:
+            "Stelle eine Frage auf Deutsch oder Englisch.<br>Schreib sie. Oder sprich sie aus.",
+          chat: "Chat starten",
+          voice: "Sprachgespräch starten",
+          notice:
+            "Du sprichst mit einer KI. Bitte teile keine sensiblen Informationen.",
+          connecting: "Verbindung wird hergestellt…",
+          error: "Verbindung nicht möglich",
+          conversation: "Gespräch mit dem KI-Assistenten",
+        }
+      : {
+          launcher: "Talk to your AI",
+          open: "Open agent widget",
+          close: "Close",
+          widget: "AI agent widget",
+          eyebrow: "YOUR AI ASSISTANT",
+          heading: "A conversation<br>away.",
+          intro: "Ask a question in English or German.<br>Type it. Or say it.",
+          chat: "Start a chat",
+          voice: "Start a voice conversation",
+          notice:
+            "You’re speaking with an AI. Please avoid sharing sensitive information.",
+          connecting: "Connecting…",
+          error: "Unable to connect",
+          conversation: "AI agent conversation",
+        };
   const base = new URL(script.src).origin;
   const publication = script.dataset.agent;
   const style = document.createElement("style");
@@ -8,8 +44,10 @@
   document.head.appendChild(style);
   const button = document.createElement("button");
   button.className = "elma-launcher";
-  button.innerHTML = icons["message-square"] + "<span>Talk to your AI</span>";
-  button.setAttribute("aria-label", "Open agent widget");
+  button.lang = language;
+  button.innerHTML =
+    icons["message-square"] + "<span>" + labels.launcher + "</span>";
+  button.setAttribute("aria-label", labels.open);
   document.body.appendChild(button);
   let panel,
     frame,
@@ -40,10 +78,7 @@
   function iframePath(conversation, params) {
     const parts = ["widget", publication, "conversations", conversation];
     if (params.get("elma-requests-panel") === "open")
-      parts.push(
-        "requests",
-        params.get("elma-active-request") || "list",
-      );
+      parts.push("requests", params.get("elma-active-request") || "list");
     if (params.get("elma-delete-request"))
       parts.push("delete", params.get("elma-delete-request"));
     if (params.get("elma-share-conversation") === "open") parts.push("share");
@@ -99,7 +134,7 @@
     if (pending) return;
     pending = true;
     const activePanel = panel;
-    activePanel.querySelector(".elma-status").textContent = "Connecting…";
+    activePanel.querySelector(".elma-status").textContent = labels.connecting;
     activePanel
       .querySelector(`[data-mode="${mode}"]`)
       ?.setAttribute("aria-busy", "true");
@@ -122,7 +157,7 @@
       });
       if (!r.ok) {
         const error = await r.json();
-        throw new Error(error.detail || "Unable to connect");
+        throw new Error(error.detail || labels.error);
       }
       const nextSession = await r.json();
       if (panel !== activePanel) return;
@@ -140,8 +175,10 @@
       frame = document.createElement("iframe");
       route({ "elma-conversation": session.id });
       const params = new URLSearchParams(location.search);
-      frame.src = new URL(iframePath(session.id, params), base).href;
-      frame.title = "AI agent conversation";
+      const frameUrl = new URL(iframePath(session.id, params), base);
+      frameUrl.searchParams.set("language", language);
+      frame.src = frameUrl.href;
+      frame.title = labels.conversation;
       frame.allow = "microphone; autoplay";
       panel.replaceChildren(frame);
       fit();
@@ -164,9 +201,10 @@
     button.style.display = "none";
     panel = document.createElement("section");
     panel.className = "elma-panel";
-    panel.setAttribute("aria-label", "AI agent widget");
-    panel.innerHTML = `<div class="elma-intro"><button class="elma-close" aria-label="Close">${icons.x}</button><div class="elma-eyebrow">YOUR AI ASSISTANT</div><h2>A conversation<br>away.</h2><p>Ask a question in English or German.<br>Type it. Or say it.</p><div class="elma-start"><button data-mode="text">${icons["message-square"]} Start a chat</button><button data-mode="voice">${icons.mic} Start a voice conversation</button></div><p class="elma-status" role="status">You’re speaking with an AI. Please avoid sharing sensitive information.</p></div>`;
-    panel.querySelector('[aria-label="Close"]').onclick = () => close();
+    panel.lang = language;
+    panel.setAttribute("aria-label", labels.widget);
+    panel.innerHTML = `<div class="elma-intro"><button class="elma-close" aria-label="${labels.close}">${icons.x}</button><div class="elma-eyebrow">${labels.eyebrow}</div><h2>${labels.heading}</h2><p>${labels.intro}</p><div class="elma-start"><button data-mode="text">${icons["message-square"]} ${labels.chat}</button><button data-mode="voice">${icons.mic} ${labels.voice}</button></div><p class="elma-status" role="status">${labels.notice}</p></div>`;
+    panel.querySelector(".elma-close").onclick = () => close();
     panel
       .querySelectorAll("[data-mode]")
       .forEach((b) => (b.onclick = () => start(b.dataset.mode)));
@@ -175,7 +213,7 @@
     window.visualViewport?.addEventListener("scroll", fit);
     window.addEventListener("resize", fit);
     fit();
-    panel.querySelector('[aria-label="Close"]').focus();
+    panel.querySelector(".elma-close").focus();
   }
   button.onclick = () => open();
   window.addEventListener("message", (e) => {

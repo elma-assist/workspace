@@ -133,6 +133,7 @@ class Usage(BaseModel):
 
 
 class Publication(BaseModel):
+    language: Literal["en", "de"]
     id: UUID
     enabled: bool
     origins: list[str]

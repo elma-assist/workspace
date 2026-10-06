@@ -4273,6 +4273,14 @@
       },
       "Publication": {
         "properties": {
+          "language": {
+            "type": "string",
+            "enum": [
+              "en",
+              "de"
+            ],
+            "title": "Language"
+          },
           "id": {
             "type": "string",
             "format": "uuid",
@@ -4300,6 +4308,7 @@
         },
         "type": "object",
         "required": [
+          "language",
           "id",
           "enabled",
           "origins",
@@ -4310,6 +4319,15 @@
       },
       "PublicationInput": {
         "properties": {
+          "language": {
+            "type": "string",
+            "enum": [
+              "en",
+              "de"
+            ],
+            "title": "Language",
+            "default": "en"
+          },
           "enabled": {
             "type": "boolean",
             "title": "Enabled"

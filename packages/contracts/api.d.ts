@@ -1415,6 +1415,11 @@ export interface components {
         /** Publication */
         Publication: {
             /**
+             * Language
+             * @enum {string}
+             */
+            language: "en" | "de";
+            /**
              * Id
              * Format: uuid
              */
@@ -1430,6 +1435,12 @@ export interface components {
         };
         /** PublicationInput */
         PublicationInput: {
+            /**
+             * Language
+             * @default en
+             * @enum {string}
+             */
+            language: "en" | "de";
             /** Enabled */
             enabled: boolean;
             /** Origins */

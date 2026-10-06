@@ -1,7 +1,14 @@
 "use client";
 import { Button } from "./AsyncAction";
 import { useState, useEffect } from "react";
-import { Stack, Textarea, Checkbox, Text, Divider } from "@mantine/core";
+import {
+  Stack,
+  Textarea,
+  Checkbox,
+  Text,
+  Divider,
+  Select,
+} from "@mantine/core";
 import { api, Agent, Organization } from "../lib/api";
 import type { components } from "../../../packages/contracts/api";
 import { EditorPage, ErrorNotice } from "./ui";
@@ -21,11 +28,13 @@ export function WidgetEditor({
     [enabled, setEnabled] = useState(false),
     [loaded, setLoaded] = useState(false),
     [busy, setBusy] = useState(false);
+  const [language, setLanguage] = useState<"en" | "de">("en");
   const path = `/organizations/${org.id}/agents/${agent.id}/publication`;
   useEffect(() => {
     api<Publication | null>(path)
       .then((p) => {
         setPublication(p);
+        setLanguage(p?.language || "en");
         setOrigins(p?.origins.join("\n") || "");
         setEnabled(p?.enabled || false);
         setLoaded(true);
@@ -41,6 +50,7 @@ export function WidgetEditor({
       setPublication(
         await api<Publication>(path, "PUT", {
           enabled,
+          language,
           origins: origins
             .split("\n")
             .map((s) => s.trim())
@@ -67,6 +77,18 @@ export function WidgetEditor({
             checked={enabled}
             onChange={(e) => setEnabled(e.currentTarget.checked)}
             label="Publish agent"
+          />
+          <Select
+            label="Widget language"
+            description="Controls widget buttons and labels independently of the agent instruction."
+            data={[
+              { value: "en", label: "English" },
+              { value: "de", label: "Deutsch" },
+            ]}
+            value={language}
+            allowDeselect={false}
+            disabled={!loaded || busy}
+            onChange={(value) => setLanguage(value === "de" ? "de" : "en")}
           />
           <Textarea
             disabled={!loaded || busy}

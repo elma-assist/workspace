@@ -1,4 +1,5 @@
 "use client";
+import { useWidgetText } from "./WidgetLanguage";
 import { useEffect, useRef, useState } from "react";
 import { Box, Group, Text } from "@mantine/core";
 
@@ -13,6 +14,7 @@ export function CallStatus({
   switching: boolean;
   state: string;
 }) {
+  const t = useWidgetText();
   const started = useRef<number | null>(null);
   const [seconds, setSeconds] = useState(0);
   const visible = voice || switching;
@@ -36,15 +38,15 @@ export function CallStatus({
   const unavailable = /disconnected|error/i.test(state);
   const label = switching
     ? voice
-      ? "Ending call…"
-      : "Calling…"
+      ? t("Ending call…")
+      : t("Calling…")
     : unavailable
-      ? "Call disconnected"
+      ? t("Call disconnected")
       : /reconnecting/i.test(state)
-        ? "Reconnecting…"
+        ? t("Reconnecting…")
         : onLine
-          ? "On the line"
-          : "Connecting call…";
+          ? t("On the line")
+          : t("Connecting call…");
   const color = onLine ? "green.7" : unavailable ? "red.7" : "dimmed";
   return (
     <Group
@@ -68,7 +70,7 @@ export function CallStatus({
           size="xs"
           c={color}
           role="timer"
-          aria-label="Call duration"
+          aria-label={t("Call duration")}
           style={{ fontVariantNumeric: "tabular-nums", minWidth: "5ch" }}
         >
           {String(Math.floor(seconds / 60)).padStart(2, "0")}:

@@ -106,8 +106,8 @@ def publish(
     ).fetchone():
         raise HTTPException(404, "Agent not found")
     row = conn.execute(
-        "INSERT INTO publications(id,org_id,agent_id,enabled,origins) VALUES (%s,%s,%s,%s,%s) ON CONFLICT(org_id,agent_id) DO UPDATE SET enabled=excluded.enabled,origins=excluded.origins RETURNING *",
-        (uuid4(), org_id, agent_id, data.enabled, data.origins),
+        "INSERT INTO publications(id,org_id,agent_id,enabled,origins,language) VALUES (%s,%s,%s,%s,%s,%s) ON CONFLICT(org_id,agent_id) DO UPDATE SET enabled=excluded.enabled,origins=excluded.origins,language=excluded.language RETURNING *",
+        (uuid4(), org_id, agent_id, data.enabled, data.origins, data.language),
     ).fetchone()
     return publication_result(conn, row)
 
@@ -119,7 +119,7 @@ def publication_result(conn, row):
     ).fetchone()
     return {
         **row,
-        "embed": f'<script src="{settings.public_url}/widget.js" data-agent="{row["id"]}" defer></script>',
+        "embed": f'<script src="{settings.public_url}/widget.js" data-agent="{row["id"]}" lang="{row["language"]}" defer></script>',
         "url": f"{settings.public_url}/a/{slugs['organization']}/{slugs['agent']}",
     }
 
