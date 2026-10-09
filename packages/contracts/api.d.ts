@@ -1546,6 +1546,7 @@ export interface components {
         };
         /** Session */
         Session: {
+            widget_context?: components["schemas"]["WidgetContext"] | null;
             /**
              * Id
              * Format: uuid
@@ -1589,6 +1590,12 @@ export interface components {
         };
         /** SessionInput */
         SessionInput: {
+            widget_context?: components["schemas"]["WidgetContext"] | null;
+            /**
+             * New Conversation
+             * @default false
+             */
+            new_conversation: boolean;
             /** Conversation Id */
             conversation_id?: string | null;
             /**
@@ -1610,6 +1617,7 @@ export interface components {
         };
         /** SharedConversation */
         SharedConversation: {
+            widget_context?: components["schemas"]["WidgetContext"] | null;
             /** Agent Name */
             agent_name: string;
             /** Title */
@@ -1733,6 +1741,32 @@ export interface components {
             input?: unknown;
             /** Context */
             ctx?: Record<string, never>;
+        };
+        /** WidgetContext */
+        WidgetContext: {
+            /**
+             * Brand Name
+             * @default
+             */
+            brand_name: string;
+            /**
+             * Assistant Name
+             * @default
+             */
+            assistant_name: string;
+            /**
+             * Language
+             * @default en
+             * @enum {string}
+             */
+            language: "en" | "de";
+            /** Scenario */
+            scenario?: ("damage" | "management_question" | "management_inquiry") | null;
+            /**
+             * Demo
+             * @default false
+             */
+            demo: boolean;
         };
     };
     responses: never;

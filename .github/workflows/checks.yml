@@ -43,7 +43,7 @@ jobs:
       - run: npx playwright install --with-deps chromium
       - name: Browser checks without paid AI services
         run: |
-          npx playwright test --project=desktop tests/browser/landing.spec.ts tests/browser/landing-locale.spec.ts
+          npx playwright test --project=desktop tests/browser/landing.spec.ts tests/browser/landing-locale.spec.ts tests/browser/widget-integration.spec.ts
           npx playwright test --project=desktop tests/browser/agent-description.spec.ts --grep 'agent editor saves'
       - name: Failure diagnostics
         if: failure()

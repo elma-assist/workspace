@@ -16,6 +16,7 @@ from livekit.agents import (
 )
 from livekit.plugins import cartesia, deepgram, mistralai, silero
 from events import Events
+from widget_context import widget_instructions, widget_greeting
 from contracts.models import RuntimeConfig
 from retrieval import model_context
 from form_tools import FormTools, active_context
@@ -79,7 +80,8 @@ class Assistant(Agent):
             "Only submission requires all required fields; draft updates are partial. Forms appear outside the chat. "
             "Users can attach photos there. Only the user can submit by reviewing and pressing Submit request. "
             "Never claim a request was submitted unless current_requests confirms a non-draft status. "
-            "Never claim to email a link: email delivery is not configured.",
+            "Never claim to email a link: email delivery is not configured."
+            + widget_instructions(config),
         )
         self.client = client
         self.path = path
@@ -295,6 +297,9 @@ def provider_for(config: dict, operation: str) -> str:
 
 
 def opening_greeting(config: dict) -> str:
+    greeting = widget_greeting(config)
+    if greeting:
+        return greeting
     name = config["name"]
     if config["language"] == "Russian":
         return f"Здравствуйте! Я {name}, ваш ИИ-помощник. Чем я могу помочь?"

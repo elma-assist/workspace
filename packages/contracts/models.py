@@ -39,7 +39,17 @@ class AgentConfig(BaseModel):
         return self
 
 
+class WidgetContext(BaseModel):
+    model_config = ConfigDict(extra="forbid", str_strip_whitespace=True)
+    brand_name: str = Field(default="", max_length=120)
+    assistant_name: str = Field(default="", max_length=120)
+    language: Literal["en", "de"] = "en"
+    scenario: Literal["damage", "management_question", "management_inquiry"] | None = None
+    demo: bool = False
+
+
 class RuntimeConfig(AgentConfig):
+    widget_context: WidgetContext | None = None
     name: str
     instruction: str
     kb_ids: list[UUID]

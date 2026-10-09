@@ -1,4 +1,4 @@
-from contracts.models import AgentConfig
+from contracts.models import AgentConfig, WidgetContext
 from typing import Literal
 from uuid import UUID
 from pydantic import BaseModel, ConfigDict, EmailStr, Field, field_validator
@@ -71,6 +71,8 @@ class PublicationInput(Contract):
 
 
 class SessionInput(Contract):
+    widget_context: WidgetContext | None = None
+    new_conversation: bool = False
     conversation_id: UUID | None = None
     mode: Literal["text", "voice"] = "text"
 

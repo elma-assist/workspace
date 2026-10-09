@@ -9,6 +9,7 @@ import { useState, useEffect } from "react";
 import { Session } from "../../lib/api";
 import {
   WidgetLanguageContext,
+  WidgetBrandContext,
   WidgetLanguage,
 } from "../../components/WidgetLanguage";
 import { Chat } from "../../components/Chat";
@@ -27,7 +28,7 @@ export default function Widget() {
     setStandalone(window.parent === window);
     const receive = (e: MessageEvent) => {
       if (e.source !== window.parent) return;
-      const s = e.data.session;
+      const s = e.data?.type === "elma:session" ? e.data.session : null;
       if (
         s &&
         typeof s.token === "string" &&
@@ -35,6 +36,13 @@ export default function Widget() {
         typeof s.url === "string"
       ) {
         setSession(s as Session);
+        if (
+          s.widget_context?.language === "de" ||
+          s.widget_context?.language === "en"
+        ) {
+          setLanguage(s.widget_context.language);
+          document.documentElement.lang = s.widget_context.language;
+        }
         const agent = readRouteValues(location.pathname, location.search).agent;
         if (agent && s.visitor_token) {
           try {
@@ -95,14 +103,16 @@ export default function Widget() {
     );
   return session ? (
     <WidgetLanguageContext.Provider value={language}>
-      <Chat
-        inline
-        session={session}
-        onClose={() => {
-          setSession(null);
-          window.parent.postMessage({ type: "elma:close" }, "*");
-        }}
-      />
+      <WidgetBrandContext.Provider value={!!session.widget_context?.brand_name}>
+        <Chat
+          inline
+          session={session}
+          onClose={() => {
+            setSession(null);
+            window.parent.postMessage({ type: "elma:close" }, "*");
+          }}
+        />
+      </WidgetBrandContext.Provider>
     </WidgetLanguageContext.Provider>
   ) : (
     <div className="widget-wait">

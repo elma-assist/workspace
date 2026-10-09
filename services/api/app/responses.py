@@ -7,7 +7,7 @@ from decimal import Decimal
 from typing import Literal
 from uuid import UUID
 
-from contracts.models import AgentConfig
+from contracts.models import AgentConfig, WidgetContext
 from pydantic import BaseModel
 
 
@@ -53,6 +53,7 @@ class Document(BaseModel):
 
 
 class Session(BaseModel):
+    widget_context: WidgetContext | None = None
     id: UUID
     token: str
     url: str
@@ -152,5 +153,6 @@ class ShareLink(BaseModel):
 
 
 class SharedConversation(BaseModel):
+    widget_context: WidgetContext | None = None
     agent_name: str
     title: str

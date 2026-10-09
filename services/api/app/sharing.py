@@ -111,7 +111,7 @@ def revoke_shares(cid: UUID, request: Request, conn=Depends(db)):
 def shared_info(data: ShareInput, conn=Depends(db)):
     share = lookup_share(conn, data.token)
     return conn.execute(
-        "SELECT c.title,a.name AS agent_name FROM conversations c JOIN agents a ON a.id=c.agent_id WHERE c.id=%s",
+        "SELECT c.title,COALESCE(NULLIF(c.config->'widget_context'->>'assistant_name',''),a.name) AS agent_name,c.config->'widget_context' AS widget_context FROM conversations c JOIN agents a ON a.id=c.agent_id WHERE c.id=%s",
         (share["conversation_id"],),
     ).fetchone()
 

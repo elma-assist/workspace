@@ -37,6 +37,61 @@
           error: "Unable to connect",
           conversation: "AI agent conversation",
         };
+  const brandName = (script.dataset.brandName || "").trim().slice(0, 120);
+  const assistantName = (script.dataset.assistantName || brandName)
+    .trim()
+    .slice(0, 120);
+  const launcherLabel = (script.dataset.launcherLabel || "")
+    .trim()
+    .slice(0, 120);
+  const demo = script.dataset.demo === "true";
+  const scenarios = ["damage", "management_question", "management_inquiry"];
+  let scenario = null,
+    fresh = false;
+  const escape = (text) =>
+    text.replace(
+      /[&<>"']/g,
+      (c) =>
+        ({
+          "&": "&amp;",
+          "<": "&lt;",
+          ">": "&gt;",
+          '"': "&quot;",
+          "'": "&#39;",
+        })[c],
+    );
+  if (brandName)
+    Object.assign(
+      labels,
+      language === "de"
+        ? {
+            launcher: "Anliegen mitteilen",
+            open: "Service öffnen",
+            widget: assistantName,
+            eyebrow: brandName,
+            heading: "Wie können wir Ihnen helfen?",
+            intro:
+              "Teilen Sie uns Ihr Anliegen schriftlich oder per Sprache mit.",
+            notice:
+              "Sie sprechen mit einem digitalen KI-Assistenten. Bitte teilen Sie keine sensiblen Informationen.",
+          }
+        : {
+            launcher: "Tell us your concern",
+            open: "Open service",
+            widget: assistantName,
+            eyebrow: brandName,
+            heading: "How can we help you?",
+            intro: "Tell us your concern in writing or by voice.",
+            notice:
+              "You are speaking with a digital AI assistant. Please avoid sharing sensitive information.",
+          },
+    );
+  if (demo)
+    labels.notice +=
+      language === "de"
+        ? " Konzeptdemo: keine bestätigte Übermittlung an das Unternehmen."
+        : " Concept demo: no confirmed delivery to the company.";
+  if (launcherLabel) labels.launcher = launcherLabel;
   const base = new URL(script.src).origin;
   const publication = script.dataset.agent;
   const style = document.createElement("style");
@@ -46,7 +101,7 @@
   button.className = "elma-launcher";
   button.lang = language;
   button.innerHTML =
-    icons["message-square"] + "<span>" + labels.launcher + "</span>";
+    icons["message-square"] + "<span>" + escape(labels.launcher) + "</span>";
   button.setAttribute("aria-label", labels.open);
   document.body.appendChild(button);
   let panel,
@@ -100,11 +155,13 @@
       route({
         "elma-agent": null,
         "elma-conversation": null,
+        "elma-scenario": null,
         ...Object.fromEntries(routeKeys.map((k) => ["elma-" + k, null])),
       });
     panel?.remove();
     panel = frame = session = null;
     pending = false;
+    fresh = false;
     button.style.display = "inline-flex";
     button.focus();
     window.visualViewport?.removeEventListener("resize", fit);
@@ -150,9 +207,18 @@
         },
         body: JSON.stringify({
           mode,
-          conversation_id:
-            new URLSearchParams(location.search).get("elma-conversation") ||
-            savedConversation(),
+          new_conversation: fresh,
+          widget_context: {
+            brand_name: brandName,
+            assistant_name: assistantName,
+            language,
+            scenario,
+            demo,
+          },
+          conversation_id: fresh
+            ? null
+            : new URLSearchParams(location.search).get("elma-conversation") ||
+              savedConversation(),
         }),
       });
       if (!r.ok) {
@@ -162,6 +228,7 @@
       const nextSession = await r.json();
       if (panel !== activePanel) return;
       session = nextSession;
+      fresh = false;
       try {
         localStorage.setItem(
           "elma-conversation-" + base + "-" + publication,
@@ -203,7 +270,7 @@
     panel.className = "elma-panel";
     panel.lang = language;
     panel.setAttribute("aria-label", labels.widget);
-    panel.innerHTML = `<div class="elma-intro"><button class="elma-close" aria-label="${labels.close}">${icons.x}</button><div class="elma-eyebrow">${labels.eyebrow}</div><h2>${labels.heading}</h2><p>${labels.intro}</p><div class="elma-start"><button data-mode="text">${icons["message-square"]} ${labels.chat}</button><button data-mode="voice">${icons.mic} ${labels.voice}</button></div><p class="elma-status" role="status">${labels.notice}</p></div>`;
+    panel.innerHTML = `<div class="elma-intro"><button class="elma-close" aria-label="${labels.close}">${icons.x}</button><div class="elma-eyebrow">${escape(labels.eyebrow)}</div><h2>${brandName ? escape(labels.heading) : labels.heading}</h2><p>${labels.intro}</p><div class="elma-start"><button data-mode="text">${icons["message-square"]} ${labels.chat}</button><button data-mode="voice">${icons.mic} ${labels.voice}</button></div><p class="elma-status" role="status">${escape(labels.notice)}</p></div>`;
     panel.querySelector(".elma-close").onclick = () => close();
     panel
       .querySelectorAll("[data-mode]")
@@ -234,7 +301,11 @@
       close(false);
       return;
     }
+    scenario = scenarios.includes(params.get("elma-scenario"))
+      ? params.get("elma-scenario")
+      : null;
     const cid = params.get("elma-conversation");
+    fresh = !!scenario && !cid;
     if (session && cid !== session.id) close(false);
     open(false);
     if (cid && !session && !pending) void start("text");
@@ -250,6 +321,32 @@
     }
   }
   window.addEventListener("popstate", restore);
-  window.addEventListener("elma:open", () => open());
+  window.addEventListener("elma:open", (event) => {
+    const detail = event.detail;
+    if (detail?.agent && detail.agent !== publication) return;
+    if (detail?.scenario != null) {
+      if (!scenarios.includes(detail.scenario)) return;
+      close(false);
+      scenario = detail.scenario;
+      fresh = true;
+      route({
+        "elma-agent": publication,
+        "elma-conversation": null,
+        "elma-scenario": scenario,
+        ...Object.fromEntries(routeKeys.map((k) => ["elma-" + k, null])),
+      });
+      open(false);
+    } else open();
+  });
+  const capabilities = Object.freeze({
+    version: 2,
+    agent: publication,
+    features: Object.freeze(["branding", "scenarios", "demo"]),
+  });
+  window.elmaWidgets ||= {};
+  window.elmaWidgets[publication] = capabilities;
+  window.dispatchEvent(
+    new CustomEvent("elma:widget-ready", { detail: capabilities }),
+  );
   restore();
 })();

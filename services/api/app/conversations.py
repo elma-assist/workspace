@@ -59,6 +59,7 @@ def open_session(
     visitor_token=None,
     existing=None,
     share_id=None,
+    widget_context=None,
 ) -> dict:
     cid = existing["id"] if existing else uuid4()
     run_id = uuid4()
@@ -72,6 +73,15 @@ def open_session(
         "version": agent["version"],
         "mode": mode,
     }
+    context = (
+        existing["config"].get("widget_context") or widget_context
+        if existing else widget_context
+    )
+    if context:
+        config["widget_context"] = context
+        config["name"] = context.get("assistant_name") or config["name"]
+        if context.get("brand_name"):
+            config["language"] = "German" if context["language"] == "de" else "English"
     if existing:
         conn.execute(
             "UPDATE conversations SET room_name=%s,run_id=%s,guest_hash=%s,config=%s,status='connecting',run_share_id=%s WHERE id=%s",
@@ -131,8 +141,12 @@ def open_session(
         "url": settings.livekit_public_url,
         "guest_token": guest,
         "visitor_token": visitor_token,
-        "agent_name": agent["name"],
-        "agent_description": agent["description"],
+        "agent_name": config["name"],
+        "widget_context": context,
+        "agent_description": (
+            ("Digitaler KI-Assistent" if context["language"] == "de" else "Digital AI assistant")
+            if context and context.get("brand_name") else agent["description"]
+        ),
         "mode": mode,
         "resumed": bool(existing),
         "messages": read_conversation(conn, cid)["messages"],
@@ -279,7 +293,7 @@ def guest_session(
             (uuid4(), publication_id, digest(token)),
         ).fetchone()
     existing = None
-    if data.conversation_id:
+    if data.conversation_id and not data.new_conversation:
         existing = conn.execute(
             "SELECT * FROM conversations WHERE id=%s AND org_id=%s AND agent_id=%s AND visitor_id=%s FOR UPDATE",
             (data.conversation_id, pub["org_id"], agent["id"], visitor["id"]),
@@ -291,14 +305,16 @@ def guest_session(
             ).fetchone()
         ):
             raise HTTPException(403, "Conversation access denied")
-    if not existing:
+    if not existing and not data.new_conversation:
         # Upgrade existing visitors who already have a saved guest secret but no saved conversation ID.
         existing = conn.execute(
             "SELECT * FROM conversations WHERE visitor_id=%s AND agent_id=%s ORDER BY created_at DESC LIMIT 1 FOR UPDATE",
             (visitor["id"], agent["id"]),
         ).fetchone()
     return open_session(
-        conn, agent, None, data.mode, visitor["id"], token, existing=existing
+        conn, agent, None, data.mode, visitor["id"], token,
+        existing=existing,
+        widget_context=data.widget_context.model_dump() if data.widget_context else None,
     )
 
 

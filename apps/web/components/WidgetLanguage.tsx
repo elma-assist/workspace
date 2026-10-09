@@ -1,6 +1,7 @@
 "use client";
 import { createContext, useContext } from "react";
 export type WidgetLanguage = "en" | "de";
+export const WidgetBrandContext = createContext(false);
 export const WidgetLanguageContext = createContext<WidgetLanguage>("en");
 const german: Record<string, string> = {
   "Connecting to agent": "Verbindung zum Assistenten wird hergestellt",
@@ -46,5 +47,18 @@ const german: Record<string, string> = {
 };
 export function useWidgetText() {
   const language = useContext(WidgetLanguageContext);
-  return (text: string) => (language === "de" ? german[text] || text : text);
+  const branded = useContext(WidgetBrandContext);
+  const formal: Record<string, string> = {
+    "Processing your request": "Ihre Anfrage wird bearbeitet",
+    "Ready for your message": "Bereit für Ihre Nachricht",
+    You: "Sie",
+    "Your microphone level": "Ihr Mikrofonpegel",
+    "You are speaking": "Sie sprechen",
+    "Please save the form before continuing.":
+      "Bitte speichern Sie das Formular, bevor Sie fortfahren.",
+  };
+  return (text: string) =>
+    language === "de"
+      ? (branded && formal[text]) || german[text] || text
+      : text;
 }

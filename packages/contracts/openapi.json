@@ -4599,6 +4599,16 @@
       },
       "Session": {
         "properties": {
+          "widget_context": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/WidgetContext"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "id": {
             "type": "string",
             "format": "uuid",
@@ -4682,6 +4692,21 @@
       },
       "SessionInput": {
         "properties": {
+          "widget_context": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/WidgetContext"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "new_conversation": {
+            "type": "boolean",
+            "title": "New Conversation",
+            "default": false
+          },
           "conversation_id": {
             "anyOf": [
               {
@@ -4739,6 +4764,16 @@
       },
       "SharedConversation": {
         "properties": {
+          "widget_context": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/WidgetContext"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "agent_name": {
             "type": "string",
             "title": "Agent Name"
@@ -5071,6 +5106,55 @@
           "type"
         ],
         "title": "ValidationError"
+      },
+      "WidgetContext": {
+        "properties": {
+          "brand_name": {
+            "type": "string",
+            "maxLength": 120,
+            "title": "Brand Name",
+            "default": ""
+          },
+          "assistant_name": {
+            "type": "string",
+            "maxLength": 120,
+            "title": "Assistant Name",
+            "default": ""
+          },
+          "language": {
+            "type": "string",
+            "enum": [
+              "en",
+              "de"
+            ],
+            "title": "Language",
+            "default": "en"
+          },
+          "scenario": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "damage",
+                  "management_question",
+                  "management_inquiry"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Scenario"
+          },
+          "demo": {
+            "type": "boolean",
+            "title": "Demo",
+            "default": false
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "WidgetContext"
       }
     }
   }

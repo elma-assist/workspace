@@ -13,6 +13,7 @@ import {
 import { Mic, MessageSquare } from "lucide-react";
 import { api, Session } from "../../lib/api";
 import type { components } from "../../../../packages/contracts/api";
+import { WidgetLanguageContext, WidgetBrandContext } from "../WidgetLanguage";
 import { Chat } from "../Chat";
 import { ErrorNotice, Logo } from "../ui";
 
@@ -25,6 +26,9 @@ export function PublicConversation({
   widgetId?: string;
   initialConversationId?: string;
 }) {
+  const [widgetContext, setWidgetContext] = useState<
+    components["schemas"]["WidgetContext"] | null
+  >(null);
   const publicAgent = !!(agentPath || widgetId);
   const [publicId, setPublicId] = useState("");
   const [description, setDescription] = useState("");
@@ -90,6 +94,7 @@ export function PublicConversation({
           .then((r) => {
             if (active && current === version) {
               setName(r.agent_name);
+              setWidgetContext(r.widget_context || null);
               setTitle(r.title);
             }
           })
@@ -182,7 +187,13 @@ export function PublicConversation({
   return (
     <main className="public-agent-page">
       <header>
-        <Logo />
+        {(session?.widget_context || widgetContext)?.brand_name ? (
+          <Text fw={600}>
+            {(session?.widget_context || widgetContext)?.brand_name}
+          </Text>
+        ) : !infoLoading && !conversationId ? (
+          <Logo />
+        ) : null}
       </header>
       {session || conversationId ? (
         <div
@@ -210,23 +221,31 @@ export function PublicConversation({
               style={{ visibility: chatReady ? "visible" : "hidden" }}
               inert={!chatReady}
             >
-              <Chat
-                key={`${session.id}:${session.token}`}
-                inline
-                session={session}
-                onInitialReady={() => setChatReady(true)}
-                onClose={() => {
-                  setSession(null);
-                  updateRoute({
-                    conversation: null,
-                    "requests-panel": null,
-                    "active-request": null,
-                    "delete-request": null,
-                    "share-conversation": null,
-                    photo: null,
-                  });
-                }}
-              />
+              <WidgetLanguageContext.Provider
+                value={session.widget_context?.language || "en"}
+              >
+                <WidgetBrandContext.Provider
+                  value={!!session.widget_context?.brand_name}
+                >
+                  <Chat
+                    key={`${session.id}:${session.token}`}
+                    inline
+                    session={session}
+                    onInitialReady={() => setChatReady(true)}
+                    onClose={() => {
+                      setSession(null);
+                      updateRoute({
+                        conversation: null,
+                        "requests-panel": null,
+                        "active-request": null,
+                        "delete-request": null,
+                        "share-conversation": null,
+                        photo: null,
+                      });
+                    }}
+                  />
+                </WidgetBrandContext.Provider>
+              </WidgetLanguageContext.Provider>
             </div>
           )}
         </div>
