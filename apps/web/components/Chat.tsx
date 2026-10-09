@@ -43,6 +43,14 @@ export function Chat({
   onInitialReady?: () => void;
 }) {
   const t = useWidgetText();
+  useEffect(() => {
+    if (!session.widget_context?.brand_name) return;
+    const previousTitle = document.title;
+    document.title = session.agent_name;
+    return () => {
+      document.title = previousTitle;
+    };
+  }, [session.agent_name, session.widget_context?.brand_name]);
   const c = useConversation(session);
   const [requestsLoading, setRequestsLoading] = useState(true);
   const initialReady = useRef(false);
@@ -206,7 +214,7 @@ export function Chat({
                     : t("Start a conversation")}
                 </Text>
                 <Text size="sm" c="dimmed">
-                  Ask a question in English or German.
+                  {t("Ask a question in English or German.")}
                 </Text>
               </Stack>
             </Center>
@@ -310,7 +318,7 @@ export function Chat({
             </Group>
             <Group justify="space-between">
               <Text size="xs" c="dimmed">
-                AI can make mistakes.
+                {t("AI can make mistakes.")}
               </Text>
               <CallStatus
                 voice={c.mode === "voice"}

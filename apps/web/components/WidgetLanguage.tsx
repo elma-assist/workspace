@@ -44,6 +44,10 @@ const german: Record<string, string> = {
   Speaking: "Assistent spricht",
   "Microphone off": "Mikrofon ausgeschaltet",
   "AI assistant": "KI-Assistent",
+  "Ask a question in English or German.":
+    "Stellen Sie eine Frage auf Deutsch oder Englisch.",
+  "AI can make mistakes.": "KI kann Fehler machen.",
+  "Voice level": "Sprachpegel",
 };
 export function useWidgetText() {
   const language = useContext(WidgetLanguageContext);

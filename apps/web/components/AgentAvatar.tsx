@@ -1,5 +1,6 @@
 "use client";
 import React from "react";
+import { useWidgetText } from "./WidgetLanguage";
 import { Avatar, Tooltip, VisuallyHidden } from "@mantine/core";
 import { useReducedMotion } from "@mantine/hooks";
 
@@ -39,6 +40,7 @@ export function AgentAvatar({
   size?: number;
   announce?: boolean;
 }) {
+  const t = useWidgetText();
   const reduced = useReducedMotion();
   const energy =
     phase === "speaking" && Number.isFinite(level)
@@ -91,7 +93,7 @@ export function AgentAvatar({
             </VisuallyHidden>
             <VisuallyHidden
               role="meter"
-              aria-label={`${name} voice level`}
+              aria-label={`${name}: ${t("Voice level")}`}
               aria-valuemin={0}
               aria-valuemax={100}
               aria-valuenow={Math.round(energy * 100)}

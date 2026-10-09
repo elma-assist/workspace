@@ -2,6 +2,10 @@ import React from "react";
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { renderToStaticMarkup } from "react-dom/server";
+import {
+  WidgetLanguageContext,
+  useWidgetText,
+} from "../../apps/web/components/WidgetLanguage";
 import { MantineProvider } from "@mantine/core";
 import {
   AgentAvatar,
@@ -35,4 +39,32 @@ test("avatar level is bounded and only signals agent speech", () => {
   assert.match(render("idle", 0.7), /aria-valuenow="0"/);
   assert.match(render("speaking", 2), /aria-valuenow="100"/);
   assert.match(render("speaking", NaN), /aria-valuenow="0"/);
+});
+
+test("German widget localizes the accessible voice meter and AI notice", () => {
+  function Notice() {
+    const t = useWidgetText();
+    return (
+      <p>
+        {t("AI can make mistakes.")} {t("Ask a question in English or German.")}
+      </p>
+    );
+  }
+  const html = renderToStaticMarkup(
+    <MantineProvider>
+      <WidgetLanguageContext.Provider value="de">
+        <AgentAvatar
+          name="Tristar Service"
+          status="Verbunden"
+          phase="idle"
+          level={0}
+        />
+        <Notice />
+      </WidgetLanguageContext.Provider>
+    </MantineProvider>,
+  );
+  assert.match(html, /aria-label="Tristar Service: Sprachpegel"/);
+  assert.match(html, /KI kann Fehler machen\./);
+  assert.match(html, /Stellen Sie eine Frage auf Deutsch oder Englisch/);
+  assert.doesNotMatch(html, /voice level|AI can make mistakes|Ask a question/);
 });

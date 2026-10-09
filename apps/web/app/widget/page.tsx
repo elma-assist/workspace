@@ -25,6 +25,7 @@ export default function Widget() {
         : "en";
     setLanguage(locale);
     document.documentElement.lang = locale;
+    document.title = locale === "de" ? "KI-Assistent" : "AI assistant";
     setStandalone(window.parent === window);
     const receive = (e: MessageEvent) => {
       if (e.source !== window.parent) return;
