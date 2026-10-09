@@ -113,3 +113,80 @@ test("branded embed carries topic without a user message and isolates new scenar
   expect(requests.at(-1).conversation_id).toBe(finalConversation);
   expect(requests.at(-1).new_conversation).toBe(false);
 });
+
+test("branded iframe title survives streamed metadata updates", async ({
+  page,
+}) => {
+  const base = process.env.WIDGET_TEST_BASE_URL || "http://localhost:8180";
+  await page.route(`${base}/integration-test`, (route) =>
+    route.fulfill({
+      contentType: "text/html; charset=utf-8",
+      body: `<iframe src="/widget/${publication}/conversations/aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa?language=de"></iframe>`,
+    }),
+  );
+  await page.route(`${base}/api/**`, (route) =>
+    route.fulfill({
+      contentType: "application/json",
+      body: /\/(forms|requests)$/.test(route.request().url())
+        ? "[]"
+        : route.request().url().endsWith("/active-request")
+          ? '{"version":0,"request":null}'
+          : '{"messages":[],"sources":[]}',
+    }),
+  );
+  await page.goto(`${base}/integration-test`);
+  const frame = page.frameLocator("iframe");
+  await expect(frame.locator(".widget-wait")).toContainText(
+    "Verbindung zum Assistenten",
+  );
+  await page.evaluate(() => {
+    document.querySelector("iframe")!.contentWindow!.postMessage(
+      {
+        type: "elma:session",
+        session: {
+          id: "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+          token: "synthetic",
+          guest_token: "synthetic",
+          url: "wss://127.0.0.1:1",
+          agent_name: "Tristar Service",
+          mode: "text",
+          messages: [],
+          widget_context: {
+            brand_name: "Tristar Hausmanagement",
+            assistant_name: "Tristar Service",
+            language: "de",
+            demo: true,
+          },
+        },
+      },
+      location.origin,
+    );
+  });
+  await expect
+    .poll(() => frame.locator("title").allTextContents())
+    .toEqual(["Tristar Service"]);
+  const documentFrame = page
+    .frames()
+    .find((f) => f.url().includes("/widget/"))!;
+  await documentFrame.evaluate(() => {
+    document.title = "AI assistant";
+  });
+  await expect
+    .poll(() => frame.locator("title").allTextContents())
+    .toEqual(["Tristar Service"]);
+  await documentFrame.evaluate(() => {
+    const metadataTitle = document.createElement("title");
+    metadataTitle.textContent = "AI assistant";
+    document.head.querySelector("title")!.replaceWith(metadataTitle);
+  });
+  await expect
+    .poll(() => frame.locator("title").allTextContents())
+    .toEqual(["Tristar Service"]);
+  await expect(frame.locator("body")).toContainText("KI kann Fehler machen.");
+  await expect(frame.locator("body")).toContainText(
+    "Stellen Sie eine Frage auf Deutsch oder Englisch.",
+  );
+  await expect(
+    frame.locator('[role="meter"][aria-label="Tristar Service: Sprachpegel"]'),
+  ).toHaveCount(1);
+});

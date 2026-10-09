@@ -46,8 +46,21 @@ export function Chat({
   useEffect(() => {
     if (!session.widget_context?.brand_name) return;
     const previousTitle = document.title;
-    document.title = session.agent_name;
+    // Next metadata can replace the title after hydration or route navigation.
+    // The active client-branded conversation remains the accessible document name.
+    const syncTitle = () => {
+      if (document.title !== session.agent_name)
+        document.title = session.agent_name;
+    };
+    syncTitle();
+    const observer = new MutationObserver(syncTitle);
+    observer.observe(document.head, {
+      childList: true,
+      subtree: true,
+      characterData: true,
+    });
     return () => {
+      observer.disconnect();
       document.title = previousTitle;
     };
   }, [session.agent_name, session.widget_context?.brand_name]);
